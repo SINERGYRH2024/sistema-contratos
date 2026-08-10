@@ -50,8 +50,14 @@
   --row-hi-bg:rgba(245,158,11,0.12);--row-er-bg:rgba(239,68,68,0.14);
 }
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--tp);font-size:13px;height:100vh;overflow:hidden}
-.app{display:flex;height:100vh}
-.nav{width:210px;background:var(--s1);border-right:0.5px solid var(--bs);display:flex;flex-direction:column;padding:12px 8px;gap:1px;flex-shrink:0;overflow-y:auto}
+.app{display:flex;height:100vh;position:relative}
+.nav{width:210px;background:var(--s1);border-right:0.5px solid var(--bs);display:flex;flex-direction:column;padding:12px 8px;gap:1px;flex-shrink:0;overflow-y:auto;transition:width .2s ease,padding .2s ease,opacity .15s ease}
+.app.nav-collapsed .nav{width:0;padding:0;opacity:0;overflow:hidden;pointer-events:none;border-right:none}
+#nav-toggle-btn{position:absolute;top:55px;left:210px;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;background:var(--s2);border:0.5px solid var(--bs);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:50;transition:left .2s ease;color:var(--tm);font-size:12px;padding:0}
+#nav-toggle-btn:hover{color:var(--tp);border-color:var(--acc)}
+#nav-toggle-btn i{transition:transform .2s ease}
+.app.nav-collapsed #nav-toggle-btn{left:0}
+.app.nav-collapsed #nav-toggle-btn i{transform:rotate(180deg)}
 .logo{padding:8px 10px 14px;border-bottom:0.5px solid var(--bs);margin-bottom:8px}
 .logo-name{font-size:14px;font-weight:500;color:var(--tp)}
 .logo-sub{font-size:11px;color:var(--tm);margin-top:2px}
@@ -233,6 +239,8 @@ tbody tr:hover td{background:var(--s1)}
     </div>
   </div>
 </nav>
+
+<button id="nav-toggle-btn" title="Ocultar menu"><i class="ti ti-chevron-left"></i></button>
 
 <div class="main">
 
@@ -586,6 +594,59 @@ tbody tr:hover td{background:var(--s1)}
   </div>
 </div>
 
+<div id="pagar-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:100;align-items:center;justify-content:center;padding:16px">
+  <div class="card" style="max-width:520px;width:100%;max-height:88vh;overflow-y:auto">
+    <div class="card-title"><span>Nova Cobrança</span></div>
+    <div class="g2" style="margin-bottom:10px">
+      <div><label style="font-size:11px;color:var(--tm);display:block;margin-bottom:4px">Tipo de cobrança / Descrição</label><input type="text" id="pagar-form-descricao" class="date-input" style="width:100%;box-sizing:border-box" placeholder="Ex.: Aluguel do escritório"></div>
+      <div><label style="font-size:11px;color:var(--tm);display:block;margin-bottom:4px">Categoria</label>
+        <select id="pagar-form-categoria" class="date-input" style="width:100%">
+          <option value="FOLHA">FOLHA</option>
+          <option value="BENEFÍCIO">BENEFÍCIO</option>
+          <option value="IMPOSTO">IMPOSTO</option>
+          <option value="FORNECEDOR">FORNECEDOR</option>
+          <option value="OUTROS">OUTROS</option>
+        </select>
+      </div>
+    </div>
+    <div class="g3" style="margin-bottom:10px">
+      <div><label style="font-size:11px;color:var(--tm);display:block;margin-bottom:4px">Tipo de documento</label>
+        <select id="pagar-form-documento" class="date-input" style="width:100%">
+          <option value="Fatura">Fatura</option>
+          <option value="Nota Fiscal">Nota Fiscal</option>
+          <option value="Nota de Débito">Nota de Débito</option>
+          <option value="Boleto">Boleto</option>
+          <option value="Imposto">Imposto</option>
+        </select>
+      </div>
+      <div><label style="font-size:11px;color:var(--tm);display:block;margin-bottom:4px">Centro de custo</label><input type="text" id="pagar-form-centrocusto" class="date-input" style="width:100%;box-sizing:border-box" placeholder="Ex.: RH, FIN, TI"></div>
+      <div><label style="font-size:11px;color:var(--tm);display:block;margin-bottom:4px">Valor (R$)</label><input type="text" id="pagar-form-valor" class="date-input" style="width:100%;box-sizing:border-box" placeholder="1200"></div>
+    </div>
+    <div class="g3" style="margin-bottom:10px">
+      <div><label style="font-size:11px;color:var(--tm);display:block;margin-bottom:4px">Vencimento</label><input type="date" id="pagar-form-vencimento" class="date-input" style="width:100%;box-sizing:border-box"></div>
+      <div><label style="font-size:11px;color:var(--tm);display:block;margin-bottom:4px">Recorrente</label>
+        <select id="pagar-form-recorrente" class="date-input" style="width:100%">
+          <option value="nao">Não</option>
+          <option value="sim">Sim</option>
+        </select>
+      </div>
+      <div><label style="font-size:11px;color:var(--tm);display:block;margin-bottom:4px">Status</label>
+        <select id="pagar-form-status" class="date-input" style="width:100%">
+          <option value="Aguard. aprovação">Aguard. aprovação</option>
+          <option value="Aprovada">Aprovada</option>
+          <option value="Paga">Paga</option>
+          <option value="Em atraso">Em atraso</option>
+        </select>
+      </div>
+    </div>
+    <div id="pagar-form-error" style="font-size:11px;color:var(--t-er);margin:8px 0;display:none"></div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px">
+      <button id="pagar-form-cancel" class="btn">Cancelar</button>
+      <button id="pagar-form-save" class="btn btn-p">Salvar cobrança</button>
+    </div>
+  </div>
+</div>
+
 <!-- FATURAMENTO -->
 <div id="p-faturamento" class="page">
   <div class="topbar"><div><h1>Faturamento</h1><p>6 faturas · mai e jun/2026</p></div></div>
@@ -639,23 +700,18 @@ tbody tr:hover td{background:var(--s1)}
 
 <!-- CONTAS A PAGAR -->
 <div id="p-pagar" class="page">
-  <div class="topbar"><div><h1>Contas a Pagar</h1><p>Despesas · Aprovações · Pagamentos</p></div></div>
+  <div class="topbar"><div><h1>Contas a Pagar</h1><p>Despesas · Aprovações · Pagamentos</p></div><button id="pagar-new-btn" class="btn btn-p"><i class="ti ti-plus"></i>Nova Cobrança</button></div>
   <div class="content">
     <div class="g4" style="margin-bottom:14px">
-      <div class="metric"><div class="ml">Aguard. aprovação</div><div class="mv" style="color:var(--t-wn)">4</div><div class="ms">R$ 12.300</div></div>
-      <div class="metric"><div class="ml">Aprovadas</div><div class="mv" style="color:var(--t-acc)">3</div><div class="ms">R$ 8.750</div></div>
-      <div class="metric"><div class="ml">Pagas no mês</div><div class="mv" style="color:var(--t-ok)">12</div><div class="ms">R$ 26.400</div></div>
-      <div class="metric"><div class="ml">Em atraso</div><div class="mv" style="color:var(--t-er)">1</div><div class="ms">R$ 1.200</div></div>
+      <div class="metric"><div class="ml">Aguard. aprovação</div><div class="mv" id="pagar-m-aguard-count" style="color:var(--t-wn)">4</div><div class="ms" id="pagar-m-aguard-sub">R$ 12.300</div></div>
+      <div class="metric"><div class="ml">Aprovadas</div><div class="mv" id="pagar-m-aprovadas-count" style="color:var(--t-acc)">3</div><div class="ms" id="pagar-m-aprovadas-sub">R$ 8.750</div></div>
+      <div class="metric"><div class="ml">Pagas no mês</div><div class="mv" id="pagar-m-pagas-count" style="color:var(--t-ok)">12</div><div class="ms" id="pagar-m-pagas-sub">R$ 26.400</div></div>
+      <div class="metric"><div class="ml">Em atraso</div><div class="mv" id="pagar-m-atraso-count" style="color:var(--t-er)">1</div><div class="ms" id="pagar-m-atraso-sub">R$ 1.200</div></div>
     </div>
     <div class="tbl-wrap">
       <table>
-        <thead><tr><th>Nº</th><th>Descrição</th><th>Categoria</th><th>Centro de Custo</th><th>Vencimento</th><th>Valor</th><th>Status</th><th>Ação</th></tr></thead>
-        <tbody>
-          <tr><td class="mono">DES-2026-00001</td><td>Salários Jun/26</td><td><span class="badge bbl">FOLHA</span></td><td>RH</td><td>05/07/2026</td><td class="mono">R$ 18.500</td><td><span class="badge bam">Aguard. aprovação</span></td><td><button class="btn" style="font-size:11px;color:var(--t-acc)">Aprovar</button></td></tr>
-          <tr><td class="mono">DES-2026-00002</td><td>Plano de Saúde</td><td><span class="badge bpr">BENEFÍCIO</span></td><td>RH</td><td>10/07/2026</td><td class="mono">R$ 3.200</td><td><span class="badge bbl">Aprovada</span></td><td><button class="btn" style="font-size:11px;color:var(--t-ok)">Pagar</button></td></tr>
-          <tr><td class="mono">DES-2026-00003</td><td>ISS Jun/26</td><td><span class="badge brd">IMPOSTO</span></td><td>FIN</td><td>15/07/2026</td><td class="mono">R$ 1.925</td><td><span class="badge bam">Aguard. aprovação</span></td><td><button class="btn" style="font-size:11px;color:var(--t-acc)">Aprovar</button></td></tr>
-          <tr><td class="mono">DES-2026-00004</td><td>Internet e Telefonia</td><td><span class="badge bam">FORNECEDOR</span></td><td>TI</td><td>20/07/2026</td><td class="mono">R$ 890</td><td><span class="badge bgn">Paga</span></td><td>—</td></tr>
-        </tbody>
+        <thead><tr><th>Nº</th><th>Descrição</th><th>Categoria</th><th>Documento</th><th>Centro de Custo</th><th>Recorrente</th><th>Vencimento</th><th>Valor</th><th>Status</th><th>Ação</th></tr></thead>
+        <tbody id="pagar-body"></tbody>
       </table>
     </div>
   </div>
@@ -2801,6 +2857,231 @@ document.querySelectorAll('.ni').forEach(n=>{
   }
 
   render();
+})();
+
+// ---- CONTAS A PAGAR (cadastro de cobrancas/contas) ----
+(function(){
+  const KEY_PAGAR = 'sinergy_contas_pagar';
+  const tbody = document.getElementById('pagar-body');
+  if(!tbody) return;
+
+  function escapeHtml(s){
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  function fmtMoedaCheia(v){
+    if(v === null || v === undefined || v === '') return '—';
+    const n = typeof v === 'number' ? v : parseFloat(String(v).replace(/[^\d.,-]/g,'').replace(',', '.'));
+    if(isNaN(n)) return '—';
+    return 'R$ ' + Math.round(n).toLocaleString('pt-BR');
+  }
+  function fmtDataBR(iso){
+    if(!iso) return '—';
+    const partes = String(iso).split('-');
+    if(partes.length !== 3) return escapeHtml(iso);
+    const [a, m, d] = partes;
+    return d + '/' + m + '/' + a;
+  }
+
+  const CATEGORIA_BADGE = {'FOLHA':'bbl', 'BENEFÍCIO':'bpr', 'IMPOSTO':'brd', 'FORNECEDOR':'bam', 'OUTROS':'bgy'};
+  const DOC_BADGE = {'Fatura':'bbl', 'Nota Fiscal':'bgn', 'Nota de Débito':'bam', 'Boleto':'bpr', 'Imposto':'brd'};
+  const STATUS_OPCOES = ['Aguard. aprovação','Aprovada','Paga','Em atraso'];
+  const STATUS_COR = {
+    'Aguard. aprovação': {bg:'var(--bg-wn)', cor:'var(--t-wn)'},
+    'Aprovada': {bg:'var(--bg-acc)', cor:'var(--t-acc)'},
+    'Paga': {bg:'var(--bg-ok)', cor:'var(--t-ok)'},
+    'Em atraso': {bg:'var(--bg-er)', cor:'var(--t-er)'}
+  };
+
+  function seed(){
+    return [
+      {numero:'DES-2026-00001', descricao:'Salários Jun/26', categoria:'FOLHA', documento:'Boleto', centroCusto:'RH', vencimento:'2026-07-05', valor:18500, recorrente:true, status:'Aguard. aprovação'},
+      {numero:'DES-2026-00002', descricao:'Plano de Saúde', categoria:'BENEFÍCIO', documento:'Fatura', centroCusto:'RH', vencimento:'2026-07-10', valor:3200, recorrente:true, status:'Aprovada'},
+      {numero:'DES-2026-00003', descricao:'ISS Jun/26', categoria:'IMPOSTO', documento:'Imposto', centroCusto:'FIN', vencimento:'2026-07-15', valor:1925, recorrente:true, status:'Aguard. aprovação'},
+      {numero:'DES-2026-00004', descricao:'Internet e Telefonia', categoria:'FORNECEDOR', documento:'Fatura', centroCusto:'TI', vencimento:'2026-07-20', valor:890, recorrente:true, status:'Paga'}
+    ];
+  }
+
+  function load(){
+    let raw = null;
+    try{ raw = localStorage.getItem(KEY_PAGAR); }catch(e){}
+    if(!raw){
+      const s = seed();
+      try{ localStorage.setItem(KEY_PAGAR, JSON.stringify(s)); }catch(e){}
+      return s;
+    }
+    try{ return JSON.parse(raw) || []; }catch(e){ return []; }
+  }
+  function save(list){ try{ localStorage.setItem(KEY_PAGAR, JSON.stringify(list)); }catch(e){} }
+
+  function renderStatusSelect(statusAtual, idx){
+    const opts = STATUS_OPCOES.map(s=>'<option value="'+s+'" '+(s===statusAtual?'selected':'')+'>'+s+'</option>').join('');
+    return '<select class="status-select pagar-status-select" data-idx="'+idx+'">'+opts+'</select>';
+  }
+  function aplicarCorStatus(sel){
+    const cor = STATUS_COR[sel.value] || STATUS_COR['Aguard. aprovação'];
+    sel.style.background = cor.bg;
+    sel.style.color = cor.cor;
+  }
+
+  function render(){
+    const contas = load();
+    tbody.innerHTML = contas.map((c, idx)=>{
+      const catBadge = '<span class="badge '+(CATEGORIA_BADGE[c.categoria] || 'bgy')+'">'+escapeHtml(c.categoria || '—')+'</span>';
+      const docBadge = c.documento ? ('<span class="badge '+(DOC_BADGE[c.documento] || 'bgy')+'">'+escapeHtml(c.documento)+'</span>') : '—';
+      const recorrenteTxt = c.recorrente ? '<span class="badge bbl">Recorrente</span>' : '<span style="color:var(--tm);font-size:11px">Pontual</span>';
+      return '<tr>' +
+        '<td class="mono">'+escapeHtml(c.numero)+'</td>' +
+        '<td>'+escapeHtml(c.descricao)+'</td>' +
+        '<td>'+catBadge+'</td>' +
+        '<td>'+docBadge+'</td>' +
+        '<td>'+escapeHtml(c.centroCusto || '—')+'</td>' +
+        '<td>'+recorrenteTxt+'</td>' +
+        '<td>'+fmtDataBR(c.vencimento)+'</td>' +
+        '<td class="mono">'+fmtMoedaCheia(c.valor)+'</td>' +
+        '<td>'+renderStatusSelect(c.status, idx)+'</td>' +
+        '<td><i class="ti ti-trash pagar-del-btn" data-idx="'+idx+'" style="cursor:pointer;color:var(--tm)" title="Remover"></i></td>' +
+      '</tr>';
+    }).join('');
+
+    tbody.querySelectorAll('.pagar-status-select').forEach(sel=>{
+      aplicarCorStatus(sel);
+      sel.addEventListener('change', ()=>{
+        const lista = load();
+        const i = parseInt(sel.dataset.idx, 10);
+        if(lista[i]){
+          lista[i].status = sel.value;
+          save(lista);
+          render();
+        }
+      });
+    });
+
+    tbody.querySelectorAll('.pagar-del-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const lista = load();
+        const i = parseInt(btn.dataset.idx, 10);
+        if(i >= 0 && i < lista.length){
+          lista.splice(i, 1);
+          save(lista);
+          render();
+        }
+      });
+    });
+
+    atualizarMetricas(contas);
+  }
+
+  function atualizarMetricas(contas){
+    const buckets = {
+      'Aguard. aprovação': {count:0, soma:0, elCount:'pagar-m-aguard-count', elSub:'pagar-m-aguard-sub'},
+      'Aprovada': {count:0, soma:0, elCount:'pagar-m-aprovadas-count', elSub:'pagar-m-aprovadas-sub'},
+      'Paga': {count:0, soma:0, elCount:'pagar-m-pagas-count', elSub:'pagar-m-pagas-sub'},
+      'Em atraso': {count:0, soma:0, elCount:'pagar-m-atraso-count', elSub:'pagar-m-atraso-sub'}
+    };
+    contas.forEach(c=>{
+      const b = buckets[c.status];
+      if(b){ b.count += 1; b.soma += (typeof c.valor === 'number' ? c.valor : 0); }
+    });
+    Object.keys(buckets).forEach(k=>{
+      const b = buckets[k];
+      const elC = document.getElementById(b.elCount);
+      const elS = document.getElementById(b.elSub);
+      if(elC) elC.textContent = String(b.count);
+      if(elS) elS.textContent = fmtMoedaCheia(b.soma);
+    });
+  }
+
+  const btnNovo = document.getElementById('pagar-new-btn');
+  const modal = document.getElementById('pagar-modal');
+  const formDescricao = document.getElementById('pagar-form-descricao');
+  const formCategoria = document.getElementById('pagar-form-categoria');
+  const formDocumento = document.getElementById('pagar-form-documento');
+  const formCentroCusto = document.getElementById('pagar-form-centrocusto');
+  const formValor = document.getElementById('pagar-form-valor');
+  const formVencimento = document.getElementById('pagar-form-vencimento');
+  const formRecorrente = document.getElementById('pagar-form-recorrente');
+  const formStatus = document.getElementById('pagar-form-status');
+  const formError = document.getElementById('pagar-form-error');
+  const btnCancel = document.getElementById('pagar-form-cancel');
+  const btnSave = document.getElementById('pagar-form-save');
+
+  function proximoNumero(){
+    const contas = load();
+    const ano = new Date().getFullYear();
+    const seq = contas.length + 1;
+    return 'DES-' + ano + '-' + String(seq).padStart(5, '0');
+  }
+
+  if(btnNovo && modal){
+    btnNovo.addEventListener('click', ()=>{
+      formDescricao.value = '';
+      formCategoria.value = 'FORNECEDOR';
+      formDocumento.value = 'Fatura';
+      formCentroCusto.value = '';
+      formValor.value = '';
+      formVencimento.value = '';
+      formRecorrente.value = 'nao';
+      formStatus.value = 'Aguard. aprovação';
+      formError.style.display = 'none';
+      modal.style.display = 'flex';
+    });
+    btnCancel.addEventListener('click', ()=>{ modal.style.display = 'none'; });
+    btnSave.addEventListener('click', ()=>{
+      const descricao = formDescricao.value.trim();
+      formError.style.display = 'none';
+      if(!descricao){
+        formError.textContent = 'Informe o tipo de cobrança / descrição.';
+        formError.style.display = 'block';
+        return;
+      }
+      if(!formVencimento.value){
+        formError.textContent = 'Informe a data de vencimento.';
+        formError.style.display = 'block';
+        return;
+      }
+      const valorNum = formValor.value ? parseFloat(formValor.value.replace(',', '.')) : null;
+      const contas = load();
+      contas.push({
+        numero: proximoNumero(),
+        descricao,
+        categoria: formCategoria.value,
+        documento: formDocumento.value,
+        centroCusto: formCentroCusto.value.trim() || '—',
+        vencimento: formVencimento.value,
+        valor: (valorNum && !isNaN(valorNum)) ? valorNum : null,
+        recorrente: formRecorrente.value === 'sim',
+        status: formStatus.value
+      });
+      save(contas);
+      modal.style.display = 'none';
+      render();
+    });
+  }
+
+  render();
+})();
+
+// ---- OCULTAR/MOSTRAR MENU LATERAL ----
+(function(){
+  const appShell = document.getElementById('app-shell');
+  const btn = document.getElementById('nav-toggle-btn');
+  if(!appShell || !btn) return;
+  const KEY = 'sinergy_nav_collapsed';
+
+  function aplicar(colapsado){
+    appShell.classList.toggle('nav-collapsed', colapsado);
+    btn.title = colapsado ? 'Mostrar menu' : 'Ocultar menu';
+  }
+
+  let colapsado = false;
+  try{ colapsado = localStorage.getItem(KEY) === '1'; }catch(e){}
+  aplicar(colapsado);
+
+  btn.addEventListener('click', ()=>{
+    colapsado = !appShell.classList.contains('nav-collapsed');
+    aplicar(colapsado);
+    try{ localStorage.setItem(KEY, colapsado ? '1' : '0'); }catch(e){}
+  });
 })();
 
 </script>
