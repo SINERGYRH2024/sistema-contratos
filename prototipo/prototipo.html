@@ -130,6 +130,12 @@ tbody tr:hover td{background:var(--s1)}
   body.printing-dre #p-dre .dre-export-actions{display:none!important}
   body.printing-dre .app,body.printing-dre .main,body.printing-dre .content{display:block!important;height:auto!important;overflow:visible!important}
   body.printing-dre{overflow:visible!important;height:auto!important}
+  body.printing-fat .nav{display:none!important}
+  body.printing-fat .page{display:none!important}
+  body.printing-fat #p-faturamento{display:flex!important}
+  body.printing-fat #p-faturamento .fat-export-actions{display:none!important}
+  body.printing-fat .app,body.printing-fat .main,body.printing-fat .content{display:block!important;height:auto!important;overflow:visible!important}
+  body.printing-fat{overflow:visible!important;height:auto!important}
 }
 .import-dropzone{border:1.5px dashed var(--bs);border-radius:var(--r);padding:20px;text-align:center;cursor:pointer;transition:background .15s,border-color .15s}
 .import-dropzone:hover,.import-dropzone.dragover{background:var(--bg-acc);border-color:var(--acc)}
@@ -647,27 +653,66 @@ tbody tr:hover td{background:var(--s1)}
   </div>
 </div>
 
+<div id="comissao-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:100;align-items:center;justify-content:center;padding:16px">
+  <div class="card" style="max-width:520px;width:100%;max-height:88vh;overflow-y:auto">
+    <div class="card-title"><span>Nova Comissão</span></div>
+    <div class="g2" style="margin-bottom:10px">
+      <div><label style="font-size:11px;color:var(--tm);display:block;margin-bottom:4px">Parceiro</label><input type="text" id="comissao-form-parceiro" class="date-input" style="width:100%;box-sizing:border-box" placeholder="Ex.: João Parceiro"></div>
+      <div><label style="font-size:11px;color:var(--tm);display:block;margin-bottom:4px">PIX / Contato</label><input type="text" id="comissao-form-pix" class="date-input" style="width:100%;box-sizing:border-box" placeholder="Ex.: joao@email.com"></div>
+    </div>
+    <div class="g2" style="margin-bottom:10px">
+      <div><label style="font-size:11px;color:var(--tm);display:block;margin-bottom:4px">Contrato</label><input type="text" id="comissao-form-contrato" class="date-input" style="width:100%;box-sizing:border-box" placeholder="Ex.: CTR-2026-0003"></div>
+      <div><label style="font-size:11px;color:var(--tm);display:block;margin-bottom:4px">Cliente</label><input type="text" id="comissao-form-cliente" class="date-input" style="width:100%;box-sizing:border-box" placeholder="Ex.: Vale Verde"></div>
+    </div>
+    <div class="g2" style="margin-bottom:10px">
+      <div><label style="font-size:11px;color:var(--tm);display:block;margin-bottom:4px">Valor total (R$)</label><input type="text" id="comissao-form-valor" class="date-input" style="width:100%;box-sizing:border-box" placeholder="2500"></div>
+      <div><label style="font-size:11px;color:var(--tm);display:block;margin-bottom:4px">Status</label>
+        <select id="comissao-form-status" class="date-input" style="width:100%">
+          <option value="Aguard. aprovação">Aguard. aprovação</option>
+          <option value="Aprovada">Aprovada</option>
+          <option value="Paga">Paga</option>
+        </select>
+      </div>
+    </div>
+    <div class="g3" style="margin-bottom:10px">
+      <div><label style="font-size:11px;color:var(--tm);display:block;margin-bottom:4px">Forma de pagamento</label>
+        <select id="comissao-form-forma" class="date-input" style="width:100%">
+          <option value="avista">À vista</option>
+          <option value="parcelado">Parcelado</option>
+        </select>
+      </div>
+      <div id="comissao-form-parcelas-wrap" style="display:none"><label style="font-size:11px;color:var(--tm);display:block;margin-bottom:4px">Nº de parcelas</label><input type="number" min="2" step="1" id="comissao-form-parcelas" class="date-input" style="width:100%;box-sizing:border-box" placeholder="3"></div>
+      <div id="comissao-form-valorparcela-wrap" style="display:none"><label style="font-size:11px;color:var(--tm);display:block;margin-bottom:4px">Valor da parcela</label><input type="text" id="comissao-form-valorparcela" class="date-input" style="width:100%;box-sizing:border-box" disabled></div>
+    </div>
+    <div id="comissao-form-error" style="font-size:11px;color:var(--t-er);margin:8px 0;display:none"></div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px">
+      <button id="comissao-form-cancel" class="btn">Cancelar</button>
+      <button id="comissao-form-save" class="btn btn-p">Salvar comissão</button>
+    </div>
+  </div>
+</div>
+
 <!-- FATURAMENTO -->
 <div id="p-faturamento" class="page">
-  <div class="topbar"><div><h1>Faturamento</h1><p>6 faturas · mai e jun/2026</p></div></div>
+  <div class="topbar">
+    <div><h1>Faturamento</h1><p id="fat-subtitle">6 faturas · mai e jun/2026</p></div>
+    <div class="fat-export-actions" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <select id="fat-competencia-filter" class="date-input"><option value="">Todas as competências</option></select>
+      <button id="fat-export-pdf" class="btn"><i class="ti ti-file-type-pdf"></i>Exportar PDF</button>
+      <button id="fat-export-xlsx" class="btn"><i class="ti ti-file-spreadsheet"></i>Exportar Excel</button>
+    </div>
+  </div>
   <div class="content">
     <div class="g4" style="margin-bottom:14px">
-      <div class="metric"><div class="ml">Total apurado</div><div class="mv">R$ 38,5k</div></div>
-      <div class="metric"><div class="ml">NFs emitidas</div><div class="mv">2</div><div class="ms">K2 Software</div></div>
-      <div class="metric"><div class="ml">Recebido</div><div class="mv" style="color:var(--t-ok)">R$ 8.471</div></div>
-      <div class="metric"><div class="ml">Inadimplência</div><div class="mv" style="color:var(--t-er)">R$ 3.510</div><div class="ms" style="color:var(--t-er)">45 dias</div></div>
+      <div class="metric"><div class="ml">Total apurado</div><div class="mv" id="fat-m-total">R$ 38,5k</div></div>
+      <div class="metric"><div class="ml">NFs emitidas</div><div class="mv" id="fat-m-nfs">2</div><div class="ms" id="fat-m-nfs-sub">K2 Software</div></div>
+      <div class="metric"><div class="ml">Recebido</div><div class="mv" id="fat-m-recebido" style="color:var(--t-ok)">R$ 8.471</div></div>
+      <div class="metric"><div class="ml">Inadimplência</div><div class="mv" id="fat-m-inadimp" style="color:var(--t-er)">R$ 3.510</div><div class="ms" id="fat-m-inadimp-sub" style="color:var(--t-er)">45 dias</div></div>
     </div>
     <div class="tbl-wrap">
       <table>
         <thead><tr><th>Nº fatura</th><th>Cliente</th><th>Competência</th><th>Vencimento</th><th>Total</th><th>NF</th><th>Status</th></tr></thead>
-        <tbody>
-          <tr><td class="mono">FAT-2026-00001</td><td>Horizonte Tech</td><td>Mai/26</td><td>10/06/2026</td><td class="mono">R$ 8.471</td><td style="color:var(--t-ok);font-size:11px">202605001</td><td><span class="badge bgn">Paga</span></td></tr>
-          <tr><td class="mono">FAT-2026-00002</td><td>FarmaNacional</td><td>Mai/26</td><td>30/05/2026</td><td class="mono">R$ 8.674</td><td style="color:var(--t-ok);font-size:11px">202605002</td><td><span class="badge bbl">Emitida</span></td></tr>
-          <tr><td class="mono">FAT-2026-00003</td><td>Vale Verde</td><td>Mai/26</td><td>10/06/2026</td><td class="mono">R$ 19.936</td><td style="color:var(--tm);font-size:11px">Pendente</td><td><span class="badge bam">Apurada</span></td></tr>
-          <tr><td class="mono">FAT-2026-00004</td><td>Aprender Mais</td><td>Mai/26</td><td>20/05/2026</td><td class="mono">R$ 2.800</td><td style="color:var(--t-ok);font-size:11px">202605004</td><td><span class="badge bpr">Enviada</span></td></tr>
-          <tr class="row-er"><td class="mono">FAT-2026-00005</td><td>ConectaShop</td><td>Abr/26</td><td style="color:var(--t-er);font-weight:500">Vencida 45d</td><td class="mono">R$ 3.510</td><td style="color:var(--tm);font-size:11px">—</td><td><span class="badge brd">Inadimplente</span></td></tr>
-          <tr class="row-er"><td class="mono">FAT-2026-00006</td><td>Horizonte Tech</td><td>Jun/26</td><td>10/07/2026</td><td class="mono">R$ 8.941</td><td style="color:var(--tm);font-size:11px">Pendente</td><td><span class="badge brd">Com alerta</span></td></tr>
-        </tbody>
+        <tbody id="fat-body"></tbody>
       </table>
     </div>
   </div>
@@ -820,22 +865,18 @@ tbody tr:hover td{background:var(--s1)}
 
 <!-- COMISSÕES -->
 <div id="p-comissoes" class="page">
-  <div class="topbar"><div><h1>Comissões</h1><p>Indicações de parceiros</p></div></div>
+  <div class="topbar"><div><h1>Comissões</h1><p>Indicações de parceiros</p></div><button id="comissao-new-btn" class="btn btn-p"><i class="ti ti-plus"></i>Nova Comissão</button></div>
   <div class="content">
     <div class="g4" style="margin-bottom:14px">
-      <div class="metric"><div class="ml">Aguard. aprovação</div><div class="mv" style="color:var(--t-wn)">1</div></div>
-      <div class="metric"><div class="ml">Aprovadas</div><div class="mv" style="color:var(--t-acc)">2</div><div class="ms">R$ 4.000 a pagar</div></div>
-      <div class="metric"><div class="ml">Total pago</div><div class="mv" style="color:var(--t-ok)">R$ 2.500</div></div>
-      <div class="metric"><div class="ml">Parceiros ativos</div><div class="mv">3</div></div>
+      <div class="metric"><div class="ml">Aguard. aprovação</div><div class="mv" id="comissao-m-aguard-count" style="color:var(--t-wn)">1</div></div>
+      <div class="metric"><div class="ml">Aprovadas</div><div class="mv" id="comissao-m-aprovadas-count" style="color:var(--t-acc)">2</div><div class="ms" id="comissao-m-aprovadas-sub">R$ 4.000 a pagar</div></div>
+      <div class="metric"><div class="ml">Total pago</div><div class="mv" id="comissao-m-pago" style="color:var(--t-ok)">R$ 2.500</div></div>
+      <div class="metric"><div class="ml">Parceiros ativos</div><div class="mv" id="comissao-m-parceiros">3</div></div>
     </div>
     <div class="tbl-wrap">
       <table>
-        <thead><tr><th>Nº</th><th>Parceiro</th><th>Contrato / Cliente</th><th>Valor</th><th>Status</th><th>Ação</th></tr></thead>
-        <tbody>
-          <tr><td class="mono">COM-2026-00001</td><td>João Parceiro<br><span style="font-size:10px;color:var(--tm)">PIX: joao@email.com</span></td><td>CTR-2024-0003<br><span style="font-size:10px;color:var(--tm)">Vale Verde</span></td><td class="mono">R$ 2.500</td><td><span class="badge bgn">Paga</span></td><td>—</td></tr>
-          <tr><td class="mono">COM-2026-00002</td><td>Ana Indicadora</td><td>CTR-2024-0005<br><span style="font-size:10px;color:var(--tm)">ConectaShop</span></td><td class="mono">R$ 1.800</td><td><span class="badge bbl">Aprovada</span></td><td><button class="btn" style="font-size:11px;color:var(--t-ok)">Pagar</button></td></tr>
-          <tr><td class="mono">COM-2026-00003</td><td>Carlos Consultor</td><td>CTR-2025-0001<br><span style="font-size:10px;color:var(--tm)">Campos Gerais</span></td><td class="mono">R$ 2.200</td><td><span class="badge bam">Aguard. aprovação</span></td><td><button class="btn" style="font-size:11px;color:var(--t-acc)">Aprovar</button></td></tr>
-        </tbody>
+        <thead><tr><th>Nº</th><th>Parceiro</th><th>Contrato / Cliente</th><th>Valor</th><th>Pagamento</th><th>Status</th><th>Ação</th></tr></thead>
+        <tbody id="comissao-body"></tbody>
       </table>
     </div>
   </div>
@@ -3053,6 +3094,491 @@ document.querySelectorAll('.ni').forEach(n=>{
         status: formStatus.value
       });
       save(contas);
+      modal.style.display = 'none';
+      render();
+    });
+  }
+
+  render();
+})();
+
+// ---- FATURAMENTO (competência e status editáveis, filtro e exportação) ----
+(function(){
+  const KEY_FAT = 'sinergy_faturamento';
+  const tbody = document.getElementById('fat-body');
+  if(!tbody) return;
+
+  const MESES_ABR = {'01':'Jan','02':'Fev','03':'Mar','04':'Abr','05':'Mai','06':'Jun','07':'Jul','08':'Ago','09':'Set','10':'Out','11':'Nov','12':'Dez'};
+
+  function escapeHtml(s){
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  function fmtMoedaCheia(v){
+    if(v === null || v === undefined || v === '') return '—';
+    const n = typeof v === 'number' ? v : parseFloat(String(v).replace(/[^\d.,-]/g,'').replace(',', '.'));
+    if(isNaN(n)) return '—';
+    return 'R$ ' + Math.round(n).toLocaleString('pt-BR');
+  }
+  function fmtDataBR(iso){
+    if(!iso) return '—';
+    const partes = String(iso).split('-');
+    if(partes.length !== 3) return escapeHtml(iso);
+    const [a, m, d] = partes;
+    return d + '/' + m + '/' + a;
+  }
+  function labelCompetencia(chave){
+    if(!chave) return '—';
+    const partes = String(chave).split('-');
+    if(partes.length !== 2) return escapeHtml(chave);
+    const [a, m] = partes;
+    return (MESES_ABR[m] || m) + '/' + a.slice(2);
+  }
+
+  const STATUS_OPCOES = ['Apurada','Emitida','Enviada','Paga','Inadimplente','Com alerta'];
+  const STATUS_COR = {
+    'Apurada': {bg:'var(--bg-wn)', cor:'var(--t-wn)'},
+    'Emitida': {bg:'var(--bg-acc)', cor:'var(--t-acc)'},
+    'Enviada': {bg:'var(--bg-pr)', cor:'var(--t-pr)'},
+    'Paga': {bg:'var(--bg-ok)', cor:'var(--t-ok)'},
+    'Inadimplente': {bg:'var(--bg-er)', cor:'var(--t-er)'},
+    'Com alerta': {bg:'var(--bg-er)', cor:'var(--t-er)'}
+  };
+
+  function competenciaOpcoes(dados){
+    const anoBase = new Date().getFullYear();
+    const set = new Set();
+    for(let a = anoBase - 1; a <= anoBase + 1; a++){
+      for(let m = 1; m <= 12; m++){
+        set.add(a + '-' + String(m).padStart(2, '0'));
+      }
+    }
+    dados.forEach(f=>{ if(f.competencia) set.add(f.competencia); });
+    return Array.from(set).sort();
+  }
+
+  function seed(){
+    return [
+      {numero:'FAT-2026-00001', cliente:'Horizonte Tech', competencia:'2026-05', vencimento:'2026-06-10', total:8471, nf:'202605001', status:'Paga'},
+      {numero:'FAT-2026-00002', cliente:'FarmaNacional', competencia:'2026-05', vencimento:'2026-05-30', total:8674, nf:'202605002', status:'Emitida'},
+      {numero:'FAT-2026-00003', cliente:'Vale Verde', competencia:'2026-05', vencimento:'2026-06-10', total:19936, nf:'Pendente', status:'Apurada'},
+      {numero:'FAT-2026-00004', cliente:'Aprender Mais', competencia:'2026-05', vencimento:'2026-05-20', total:2800, nf:'202605004', status:'Enviada'},
+      {numero:'FAT-2026-00005', cliente:'ConectaShop', competencia:'2026-04', vencimento:'2026-04-26', total:3510, nf:'—', status:'Inadimplente'},
+      {numero:'FAT-2026-00006', cliente:'Horizonte Tech', competencia:'2026-06', vencimento:'2026-07-10', total:8941, nf:'Pendente', status:'Com alerta'}
+    ];
+  }
+
+  function load(){
+    let raw = null;
+    try{ raw = localStorage.getItem(KEY_FAT); }catch(e){}
+    if(!raw){
+      const s = seed();
+      try{ localStorage.setItem(KEY_FAT, JSON.stringify(s)); }catch(e){}
+      return s;
+    }
+    try{ return JSON.parse(raw) || []; }catch(e){ return []; }
+  }
+  function save(list){ try{ localStorage.setItem(KEY_FAT, JSON.stringify(list)); }catch(e){} }
+
+  function renderStatusSelect(statusAtual, idx){
+    const opts = STATUS_OPCOES.map(s=>'<option value="'+s+'" '+(s===statusAtual?'selected':'')+'>'+s+'</option>').join('');
+    return '<select class="status-select fat-status-select" data-idx="'+idx+'">'+opts+'</select>';
+  }
+  function aplicarCorStatus(sel){
+    const cor = STATUS_COR[sel.value] || STATUS_COR['Apurada'];
+    sel.style.background = cor.bg;
+    sel.style.color = cor.cor;
+  }
+  function renderCompetenciaSelect(competenciaAtual, idx, opcoes){
+    const opts = opcoes.map(c=>'<option value="'+c+'" '+(c===competenciaAtual?'selected':'')+'>'+labelCompetencia(c)+'</option>').join('');
+    return '<select class="fat-competencia-select" data-idx="'+idx+'" style="font-size:11px;padding:3px 5px;border-radius:4px;border:0.5px solid var(--bs);background:var(--s2);color:var(--tp);font-family:inherit;cursor:pointer">'+opts+'</select>';
+  }
+
+  function renderVencimento(f){
+    if(f.status === 'Inadimplente' && f.vencimento){
+      const venc = new Date(f.vencimento + 'T00:00:00');
+      const hoje = new Date();
+      const dias = Math.floor((hoje - venc) / 86400000);
+      if(dias > 0) return '<span style="color:var(--t-er);font-weight:500">Vencida ' + dias + 'd</span>';
+    }
+    return fmtDataBR(f.vencimento);
+  }
+  function renderNf(nf){
+    if(nf && /^\d+$/.test(String(nf))) return '<span style="color:var(--t-ok);font-size:11px">' + escapeHtml(nf) + '</span>';
+    return '<span style="color:var(--tm);font-size:11px">' + escapeHtml(nf || '—') + '</span>';
+  }
+
+  const selectFiltro = document.getElementById('fat-competencia-filter');
+  const subtitle = document.getElementById('fat-subtitle');
+
+  function render(){
+    const todos = load();
+    const opcoesCompetencia = competenciaOpcoes(todos);
+    const filtroAnterior = selectFiltro ? selectFiltro.value : '';
+
+    if(selectFiltro){
+      const competenciasExistentes = Array.from(new Set(todos.map(f=>f.competencia).filter(Boolean))).sort();
+      const optsHtml = '<option value="">Todas as competências</option>' +
+        competenciasExistentes.map(c=>'<option value="'+c+'">'+labelCompetencia(c)+'</option>').join('');
+      if(selectFiltro.innerHTML !== optsHtml){
+        selectFiltro.innerHTML = optsHtml;
+        selectFiltro.value = competenciasExistentes.includes(filtroAnterior) ? filtroAnterior : '';
+      }
+    }
+
+    const filtro = selectFiltro ? selectFiltro.value : '';
+    const visiveis = filtro ? todos.filter(f=>f.competencia === filtro) : todos;
+
+    tbody.innerHTML = visiveis.map((f)=>{
+      const idx = todos.indexOf(f);
+      const rowClass = (f.status === 'Inadimplente' || f.status === 'Com alerta') ? ' class="row-er"' : '';
+      return '<tr' + rowClass + '>' +
+        '<td class="mono">'+escapeHtml(f.numero)+'</td>' +
+        '<td>'+escapeHtml(f.cliente)+'</td>' +
+        '<td>'+renderCompetenciaSelect(f.competencia, idx, opcoesCompetencia)+'</td>' +
+        '<td>'+renderVencimento(f)+'</td>' +
+        '<td class="mono">'+fmtMoedaCheia(f.total)+'</td>' +
+        '<td>'+renderNf(f.nf)+'</td>' +
+        '<td>'+renderStatusSelect(f.status, idx)+'</td>' +
+      '</tr>';
+    }).join('');
+
+    tbody.querySelectorAll('.fat-status-select').forEach(sel=>{
+      aplicarCorStatus(sel);
+      sel.addEventListener('change', ()=>{
+        const lista = load();
+        const i = parseInt(sel.dataset.idx, 10);
+        if(lista[i]){
+          lista[i].status = sel.value;
+          save(lista);
+          render();
+        }
+      });
+    });
+
+    tbody.querySelectorAll('.fat-competencia-select').forEach(sel=>{
+      sel.addEventListener('change', ()=>{
+        const lista = load();
+        const i = parseInt(sel.dataset.idx, 10);
+        if(lista[i]){
+          lista[i].competencia = sel.value;
+          save(lista);
+          render();
+        }
+      });
+    });
+
+    atualizarMetricas(visiveis);
+
+    if(subtitle){
+      const rotulo = filtro ? labelCompetencia(filtro) : '';
+      subtitle.textContent = visiveis.length + (visiveis.length === 1 ? ' fatura' : ' faturas') + (rotulo ? (' · ' + rotulo) : '');
+    }
+  }
+
+  function atualizarMetricas(faturas){
+    let totalApurado = 0, nfsEmitidas = 0, recebido = 0, inadimplencia = 0, maiorAtraso = 0;
+    const hoje = new Date();
+    faturas.forEach(f=>{
+      const valor = typeof f.total === 'number' ? f.total : 0;
+      totalApurado += valor;
+      if(f.nf && /^\d+$/.test(String(f.nf))) nfsEmitidas += 1;
+      if(f.status === 'Paga') recebido += valor;
+      if(f.status === 'Inadimplente'){
+        inadimplencia += valor;
+        if(f.vencimento){
+          const dias = Math.floor((hoje - new Date(f.vencimento + 'T00:00:00')) / 86400000);
+          if(dias > maiorAtraso) maiorAtraso = dias;
+        }
+      }
+    });
+    const elTotal = document.getElementById('fat-m-total');
+    const elNfs = document.getElementById('fat-m-nfs');
+    const elNfsSub = document.getElementById('fat-m-nfs-sub');
+    const elRecebido = document.getElementById('fat-m-recebido');
+    const elInadimp = document.getElementById('fat-m-inadimp');
+    const elInadimpSub = document.getElementById('fat-m-inadimp-sub');
+    if(elTotal) elTotal.textContent = fmtMoedaCheia(totalApurado);
+    if(elNfs) elNfs.textContent = String(nfsEmitidas);
+    if(elNfsSub) elNfsSub.textContent = nfsEmitidas === 1 ? '1 nota emitida' : (nfsEmitidas + ' notas emitidas');
+    if(elRecebido) elRecebido.textContent = fmtMoedaCheia(recebido);
+    if(elInadimp) elInadimp.textContent = fmtMoedaCheia(inadimplencia);
+    if(elInadimpSub) elInadimpSub.textContent = maiorAtraso > 0 ? (maiorAtraso + ' dias') : '—';
+  }
+
+  if(selectFiltro){
+    selectFiltro.addEventListener('change', render);
+  }
+
+  render();
+
+  // ---- Exportação (PDF via impressão / Excel via SheetJS) ----
+  const btnPdf = document.getElementById('fat-export-pdf');
+  const btnXlsx = document.getElementById('fat-export-xlsx');
+  if(btnPdf){
+    btnPdf.addEventListener('click', ()=>{
+      document.body.classList.add('printing-fat');
+      window.print();
+    });
+    window.addEventListener('afterprint', ()=>{
+      document.body.classList.remove('printing-fat');
+    });
+  }
+  if(btnXlsx){
+    btnXlsx.addEventListener('click', ()=>{
+      const filtro = selectFiltro ? selectFiltro.value : '';
+      const rotulo = filtro ? labelCompetencia(filtro) : 'Todas';
+      const rows = [];
+      rows.push(['Faturamento - ' + rotulo]);
+      rows.push([]);
+      rows.push(['Nº fatura', 'Cliente', 'Competência', 'Vencimento', 'Total', 'NF', 'Status']);
+      tbody.querySelectorAll('tr').forEach(tr=>{
+        const tds = tr.querySelectorAll('td');
+        if(tds.length < 7) return;
+        const competenciaSel = tds[2].querySelector('select');
+        const statusSel = tds[6].querySelector('select');
+        rows.push([
+          tds[0].textContent.trim(),
+          tds[1].textContent.trim(),
+          competenciaSel ? competenciaSel.selectedOptions[0].text : tds[2].textContent.trim(),
+          tds[3].textContent.trim(),
+          tds[4].textContent.trim(),
+          tds[5].textContent.trim(),
+          statusSel ? statusSel.value : tds[6].textContent.trim()
+        ]);
+      });
+      const ws = XLSX.utils.aoa_to_sheet(rows);
+      ws['!cols'] = [{wch:16},{wch:20},{wch:12},{wch:12},{wch:12},{wch:12},{wch:14}];
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Faturamento');
+      XLSX.writeFile(wb, 'Faturamento_' + rotulo.replace(/[^\w-]+/g, '_') + '.xlsx');
+    });
+  }
+})();
+
+// ---- COMISSÕES (cadastro, à vista/parcelado, status editável) ----
+(function(){
+  const KEY_COMISSAO = 'sinergy_comissoes';
+  const tbody = document.getElementById('comissao-body');
+  if(!tbody) return;
+
+  function escapeHtml(s){
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  function fmtMoedaCheia(v){
+    if(v === null || v === undefined || v === '') return '—';
+    const n = typeof v === 'number' ? v : parseFloat(String(v).replace(/[^\d.,-]/g,'').replace(',', '.'));
+    if(isNaN(n)) return '—';
+    return 'R$ ' + n.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+
+  const STATUS_OPCOES = ['Aguard. aprovação','Aprovada','Paga'];
+  const STATUS_COR = {
+    'Aguard. aprovação': {bg:'var(--bg-wn)', cor:'var(--t-wn)'},
+    'Aprovada': {bg:'var(--bg-acc)', cor:'var(--t-acc)'},
+    'Paga': {bg:'var(--bg-ok)', cor:'var(--t-ok)'}
+  };
+
+  function seed(){
+    return [
+      {numero:'COM-2026-00001', parceiro:'João Parceiro', pix:'joao@email.com', contrato:'CTR-2024-0003', cliente:'Vale Verde', valor:2500, formaPagamento:'avista', parcelas:1, status:'Paga'},
+      {numero:'COM-2026-00002', parceiro:'Ana Indicadora', pix:'', contrato:'CTR-2024-0005', cliente:'ConectaShop', valor:1800, formaPagamento:'avista', parcelas:1, status:'Aprovada'},
+      {numero:'COM-2026-00003', parceiro:'Carlos Consultor', pix:'', contrato:'CTR-2025-0001', cliente:'Campos Gerais', valor:2200, formaPagamento:'avista', parcelas:1, status:'Aguard. aprovação'}
+    ];
+  }
+
+  function load(){
+    let raw = null;
+    try{ raw = localStorage.getItem(KEY_COMISSAO); }catch(e){}
+    if(!raw){
+      const s = seed();
+      try{ localStorage.setItem(KEY_COMISSAO, JSON.stringify(s)); }catch(e){}
+      return s;
+    }
+    try{ return JSON.parse(raw) || []; }catch(e){ return []; }
+  }
+  function save(list){ try{ localStorage.setItem(KEY_COMISSAO, JSON.stringify(list)); }catch(e){} }
+
+  function renderStatusSelect(statusAtual, idx){
+    const opts = STATUS_OPCOES.map(s=>'<option value="'+s+'" '+(s===statusAtual?'selected':'')+'>'+s+'</option>').join('');
+    return '<select class="status-select comissao-status-select" data-idx="'+idx+'">'+opts+'</select>';
+  }
+  function aplicarCorStatus(sel){
+    const cor = STATUS_COR[sel.value] || STATUS_COR['Aguard. aprovação'];
+    sel.style.background = cor.bg;
+    sel.style.color = cor.cor;
+  }
+  function renderPagamento(c){
+    if(c.formaPagamento === 'parcelado' && c.parcelas > 1){
+      const valorParcela = (typeof c.valor === 'number' ? c.valor : 0) / c.parcelas;
+      return c.parcelas + 'x de ' + fmtMoedaCheia(valorParcela);
+    }
+    return 'À vista';
+  }
+
+  function render(){
+    const comissoes = load();
+    tbody.innerHTML = comissoes.map((c, idx)=>{
+      const pixLinha = c.pix ? ('<br><span style="font-size:10px;color:var(--tm)">PIX: '+escapeHtml(c.pix)+'</span>') : '';
+      return '<tr>' +
+        '<td class="mono">'+escapeHtml(c.numero)+'</td>' +
+        '<td>'+escapeHtml(c.parceiro)+pixLinha+'</td>' +
+        '<td>'+escapeHtml(c.contrato || '—')+'<br><span style="font-size:10px;color:var(--tm)">'+escapeHtml(c.cliente || '—')+'</span></td>' +
+        '<td class="mono">'+fmtMoedaCheia(c.valor)+'</td>' +
+        '<td style="font-size:11px">'+renderPagamento(c)+'</td>' +
+        '<td>'+renderStatusSelect(c.status, idx)+'</td>' +
+        '<td><i class="ti ti-trash comissao-del-btn" data-idx="'+idx+'" style="cursor:pointer;color:var(--tm)" title="Remover"></i></td>' +
+      '</tr>';
+    }).join('');
+
+    tbody.querySelectorAll('.comissao-status-select').forEach(sel=>{
+      aplicarCorStatus(sel);
+      sel.addEventListener('change', ()=>{
+        const lista = load();
+        const i = parseInt(sel.dataset.idx, 10);
+        if(lista[i]){
+          lista[i].status = sel.value;
+          save(lista);
+          render();
+        }
+      });
+    });
+
+    tbody.querySelectorAll('.comissao-del-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const lista = load();
+        const i = parseInt(btn.dataset.idx, 10);
+        if(i >= 0 && i < lista.length){
+          lista.splice(i, 1);
+          save(lista);
+          render();
+        }
+      });
+    });
+
+    atualizarMetricas(comissoes);
+  }
+
+  function atualizarMetricas(comissoes){
+    let aguardCount = 0, aprovadasCount = 0, aprovadasSoma = 0, totalPago = 0;
+    const parceiros = new Set();
+    comissoes.forEach(c=>{
+      const valor = typeof c.valor === 'number' ? c.valor : 0;
+      if(c.parceiro) parceiros.add(c.parceiro);
+      if(c.status === 'Aguard. aprovação') aguardCount += 1;
+      if(c.status === 'Aprovada'){ aprovadasCount += 1; aprovadasSoma += valor; }
+      if(c.status === 'Paga') totalPago += valor;
+    });
+    const elAguard = document.getElementById('comissao-m-aguard-count');
+    const elAprovCount = document.getElementById('comissao-m-aprovadas-count');
+    const elAprovSub = document.getElementById('comissao-m-aprovadas-sub');
+    const elPago = document.getElementById('comissao-m-pago');
+    const elParceiros = document.getElementById('comissao-m-parceiros');
+    if(elAguard) elAguard.textContent = String(aguardCount);
+    if(elAprovCount) elAprovCount.textContent = String(aprovadasCount);
+    if(elAprovSub) elAprovSub.textContent = fmtMoedaCheia(aprovadasSoma) + ' a pagar';
+    if(elPago) elPago.textContent = fmtMoedaCheia(totalPago);
+    if(elParceiros) elParceiros.textContent = String(parceiros.size);
+  }
+
+  const btnNovo = document.getElementById('comissao-new-btn');
+  const modal = document.getElementById('comissao-modal');
+  const formParceiro = document.getElementById('comissao-form-parceiro');
+  const formPix = document.getElementById('comissao-form-pix');
+  const formContrato = document.getElementById('comissao-form-contrato');
+  const formCliente = document.getElementById('comissao-form-cliente');
+  const formValor = document.getElementById('comissao-form-valor');
+  const formStatus = document.getElementById('comissao-form-status');
+  const formForma = document.getElementById('comissao-form-forma');
+  const formParcelasWrap = document.getElementById('comissao-form-parcelas-wrap');
+  const formParcelas = document.getElementById('comissao-form-parcelas');
+  const formValorParcelaWrap = document.getElementById('comissao-form-valorparcela-wrap');
+  const formValorParcela = document.getElementById('comissao-form-valorparcela');
+  const formError = document.getElementById('comissao-form-error');
+  const btnCancel = document.getElementById('comissao-form-cancel');
+  const btnSave = document.getElementById('comissao-form-save');
+
+  function proximoNumero(){
+    const comissoes = load();
+    const ano = new Date().getFullYear();
+    const seq = comissoes.length + 1;
+    return 'COM-' + ano + '-' + String(seq).padStart(5, '0');
+  }
+
+  function atualizarVisibilidadeParcelamento(){
+    const parcelado = formForma.value === 'parcelado';
+    formParcelasWrap.style.display = parcelado ? 'block' : 'none';
+    formValorParcelaWrap.style.display = parcelado ? 'block' : 'none';
+    if(parcelado) recalcularValorParcela();
+  }
+  function recalcularValorParcela(){
+    const valorNum = parseFloat((formValor.value || '').replace(',', '.'));
+    const parcelasNum = parseInt(formParcelas.value, 10);
+    if(!isNaN(valorNum) && parcelasNum > 0){
+      formValorParcela.value = fmtMoedaCheia(valorNum / parcelasNum);
+    } else {
+      formValorParcela.value = '';
+    }
+  }
+
+  if(formForma){
+    formForma.addEventListener('change', atualizarVisibilidadeParcelamento);
+    formParcelas.addEventListener('input', recalcularValorParcela);
+    formValor.addEventListener('input', recalcularValorParcela);
+  }
+
+  if(btnNovo && modal){
+    btnNovo.addEventListener('click', ()=>{
+      formParceiro.value = '';
+      formPix.value = '';
+      formContrato.value = '';
+      formCliente.value = '';
+      formValor.value = '';
+      formStatus.value = 'Aguard. aprovação';
+      formForma.value = 'avista';
+      formParcelas.value = '2';
+      formValorParcela.value = '';
+      atualizarVisibilidadeParcelamento();
+      formError.style.display = 'none';
+      modal.style.display = 'flex';
+    });
+    btnCancel.addEventListener('click', ()=>{ modal.style.display = 'none'; });
+    btnSave.addEventListener('click', ()=>{
+      const parceiro = formParceiro.value.trim();
+      formError.style.display = 'none';
+      if(!parceiro){
+        formError.textContent = 'Informe o nome do parceiro.';
+        formError.style.display = 'block';
+        return;
+      }
+      const valorNum = formValor.value ? parseFloat(formValor.value.replace(',', '.')) : NaN;
+      if(isNaN(valorNum) || valorNum <= 0){
+        formError.textContent = 'Informe um valor total válido.';
+        formError.style.display = 'block';
+        return;
+      }
+      const parcelado = formForma.value === 'parcelado';
+      let parcelasNum = 1;
+      if(parcelado){
+        parcelasNum = parseInt(formParcelas.value, 10);
+        if(!parcelasNum || parcelasNum < 2){
+          formError.textContent = 'Informe um número de parcelas válido (mínimo 2).';
+          formError.style.display = 'block';
+          return;
+        }
+      }
+      const comissoes = load();
+      comissoes.push({
+        numero: proximoNumero(),
+        parceiro,
+        pix: formPix.value.trim(),
+        contrato: formContrato.value.trim(),
+        cliente: formCliente.value.trim(),
+        valor: valorNum,
+        formaPagamento: parcelado ? 'parcelado' : 'avista',
+        parcelas: parcelasNum,
+        status: formStatus.value
+      });
+      save(comissoes);
       modal.style.display = 'none';
       render();
     });
