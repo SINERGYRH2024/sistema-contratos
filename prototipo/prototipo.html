@@ -307,14 +307,20 @@ tbody tr:hover td{background:var(--s1)}
 
       <div class="card">
         <div class="card-title">Assunto e mensagem</div>
-        <select id="email-subject-select" class="date-input" style="width:100%;margin-bottom:10px">
-          <option value="cobranca">Cobrança</option>
-          <option value="reajuste">Aviso de Reajuste</option>
-          <option value="vencimento">Lembrete de Vencimento de Boleto</option>
-          <option value="outro">Outro assunto</option>
-        </select>
+        <select id="email-subject-select" class="date-input" style="width:100%;margin-bottom:10px"></select>
         <input type="text" id="email-subject-custom" class="date-input" placeholder="Digite o assunto..." style="display:none;width:100%;margin-bottom:10px;box-sizing:border-box">
         <textarea id="email-body" style="width:100%;min-height:150px;font-size:12px;padding:8px 10px;border:0.5px solid var(--bs);border-radius:var(--r);font-family:inherit;resize:vertical;box-sizing:border-box"></textarea>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button id="email-save-template-btn" class="btn" style="font-size:11px"><i class="ti ti-device-floppy"></i>Salvar como modelo</button>
+          <button id="email-manage-templates-btn" class="btn" style="font-size:11px"><i class="ti ti-list-details"></i>Gerenciar modelos</button>
+        </div>
+        <div style="margin-top:14px;padding-top:10px;border-top:0.5px solid var(--border)">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:6px">
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ts);cursor:pointer"><input type="checkbox" id="email-incluir-assinatura" checked> Incluir assinatura ao enviar</label>
+            <span id="email-edit-assinatura-btn" style="font-size:11px;color:var(--acc);cursor:pointer">Editar assinatura</span>
+          </div>
+          <div id="email-assinatura-preview" style="font-size:11px;color:var(--tm);white-space:pre-wrap;background:var(--s1);border-radius:var(--r);padding:8px 10px"></div>
+        </div>
       </div>
     </div>
 
@@ -357,6 +363,40 @@ tbody tr:hover td{background:var(--s1)}
     <div style="display:flex;justify-content:flex-end;gap:8px">
       <button id="email-confirm-cancel" class="btn">Cancelar</button>
       <button id="email-confirm-ok" class="btn btn-p">Confirmar envio</button>
+    </div>
+  </div>
+</div>
+
+<div id="email-template-name-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:100;align-items:center;justify-content:center;padding:16px">
+  <div class="card" style="max-width:420px;width:100%">
+    <div class="card-title">Salvar como modelo</div>
+    <label style="font-size:11px;color:var(--tm);display:block;margin-bottom:4px">Nome do modelo</label>
+    <input type="text" id="email-template-name-input" class="date-input" style="width:100%;box-sizing:border-box" placeholder="Ex.: Segunda via de boleto">
+    <div id="email-template-name-error" style="font-size:11px;color:var(--t-er);margin:8px 0 0;display:none"></div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px">
+      <button id="email-template-name-cancel" class="btn">Cancelar</button>
+      <button id="email-template-name-save" class="btn btn-p">Salvar modelo</button>
+    </div>
+  </div>
+</div>
+
+<div id="email-templates-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:100;align-items:center;justify-content:center;padding:16px">
+  <div class="card" style="max-width:480px;width:100%;max-height:80vh;overflow-y:auto">
+    <div class="card-title">Meus modelos de e-mail</div>
+    <div id="email-templates-list" style="display:flex;flex-direction:column;gap:2px"></div>
+    <div style="display:flex;justify-content:flex-end;margin-top:14px">
+      <button id="email-templates-close" class="btn">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<div id="email-assinatura-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:100;align-items:center;justify-content:center;padding:16px">
+  <div class="card" style="max-width:460px;width:100%">
+    <div class="card-title">Editar assinatura</div>
+    <textarea id="email-assinatura-textarea" style="width:100%;min-height:120px;font-size:12px;padding:8px 10px;border:0.5px solid var(--bs);border-radius:var(--r);font-family:inherit;resize:vertical;box-sizing:border-box"></textarea>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px">
+      <button id="email-assinatura-cancel" class="btn">Cancelar</button>
+      <button id="email-assinatura-save" class="btn btn-p">Salvar assinatura</button>
     </div>
   </div>
 </div>
@@ -501,7 +541,7 @@ tbody tr:hover td{background:var(--s1)}
   <div class="content">
     <div class="tbl-wrap">
       <table>
-        <thead><tr><th>Cliente</th><th>Segmento</th><th>Porte</th><th>Contratos</th><th>Contato financeiro</th><th>Status</th></tr></thead>
+        <thead><tr><th>Cliente</th><th>Segmento</th><th>Porte</th><th>Contratos</th><th>Contato financeiro</th><th>Status</th><th>Ação</th></tr></thead>
         <tbody id="clientes-body"></tbody>
       </table>
     </div>
@@ -523,7 +563,7 @@ tbody tr:hover td{background:var(--s1)}
 
 <div id="cliente-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:100;align-items:center;justify-content:center;padding:16px">
   <div class="card" style="max-width:480px;width:100%;max-height:88vh;overflow-y:auto">
-    <div class="card-title"><span>Novo Cliente</span></div>
+    <div class="card-title"><span id="cliente-modal-title">Novo Cliente</span></div>
     <div class="g2" style="margin-bottom:10px">
       <div><label style="font-size:11px;color:var(--tm);display:block;margin-bottom:4px">Nome do cliente</label><input type="text" id="cliente-form-nome" class="date-input" style="width:100%;box-sizing:border-box"></div>
       <div><label style="font-size:11px;color:var(--tm);display:block;margin-bottom:4px">CNPJ</label><input type="text" id="cliente-form-cnpj" class="date-input" style="width:100%;box-sizing:border-box" placeholder="00.000.000/0001-00"></div>
@@ -546,6 +586,14 @@ tbody tr:hover td{background:var(--s1)}
           <option value="Inadimplente">Inadimplente</option>
           <option value="Inativo">Inativo</option>
         </select>
+      </div>
+    </div>
+    <div style="margin-bottom:10px">
+      <label style="font-size:11px;color:var(--tm);display:block;margin-bottom:4px">E-mails de contato</label>
+      <div id="cliente-form-emails-list" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px"></div>
+      <div style="display:flex;gap:6px">
+        <input type="email" id="cliente-form-email-input" class="date-input" style="flex:1;box-sizing:border-box" placeholder="Ex.: financeiro@cliente.com.br">
+        <button type="button" id="cliente-form-email-add" class="btn" style="font-size:11px">+ Adicionar</button>
       </div>
     </div>
     <div id="cliente-form-error" style="font-size:11px;color:var(--t-er);margin:8px 0;display:none"></div>
@@ -910,19 +958,27 @@ tbody tr:hover td{background:var(--s1)}
   <div class="topbar"><div><h1>Reajustes</h1><p>Controle anual por contrato</p></div></div>
   <div class="content">
     <div class="g4" style="margin-bottom:14px">
-      <div class="metric"><div class="ml">Contratos monitorados</div><div class="mv">6</div></div>
-      <div class="metric"><div class="ml">Pendentes</div><div class="mv" style="color:var(--t-er)">2</div><div class="ms" style="color:var(--t-er)">CTR-0001 +120d</div></div>
-      <div class="metric"><div class="ml">Último aplicado</div><div class="mv">INPC 4,5%</div><div class="ms">FarmaNacional</div></div>
-      <div class="metric"><div class="ml">INPC acum. 2024</div><div class="mv">4,72%</div></div>
+      <div class="metric"><div class="ml">Contratos monitorados</div><div class="mv" id="reajuste-m-total">3</div></div>
+      <div class="metric"><div class="ml">Pendentes</div><div class="mv" id="reajuste-m-pendentes-count" style="color:var(--t-er)">2</div><div class="ms" id="reajuste-m-pendentes-sub" style="color:var(--t-er)">CTR-2024-0001 +120d</div></div>
+      <div class="metric"><div class="ml">Efetivados</div><div class="mv" id="reajuste-m-efetivados" style="color:var(--t-ok)">1</div></div>
+      <div class="metric"><div class="ml">Último aplicado</div><div class="mv" id="reajuste-m-ultimo">INPC 4,50%</div><div class="ms" id="reajuste-m-ultimo-sub">FarmaNacional</div></div>
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-title">Índices acumulados (12 meses)</div>
+      <div class="g3">
+        <div><label style="font-size:11px;color:var(--tm);display:block;margin-bottom:4px">INPC (%)</label><input type="text" id="reajuste-indice-inpc" class="date-input" style="width:100%;box-sizing:border-box"></div>
+        <div><label style="font-size:11px;color:var(--tm);display:block;margin-bottom:4px">IGP-M (%)</label><input type="text" id="reajuste-indice-igpm" class="date-input" style="width:100%;box-sizing:border-box"></div>
+        <div><label style="font-size:11px;color:var(--tm);display:block;margin-bottom:4px">IPCA (%)</label><input type="text" id="reajuste-indice-ipca" class="date-input" style="width:100%;box-sizing:border-box"></div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;flex-wrap:wrap;gap:8px">
+        <div style="font-size:11px;color:var(--tm)">Atualize aqui os percentuais publicados oficialmente — eles são usados para calcular o reajuste automático da tabela abaixo.</div>
+        <button id="reajuste-indices-save" class="btn btn-p" style="font-size:11px">Salvar índices</button>
+      </div>
     </div>
     <div class="tbl-wrap">
       <table>
-        <thead><tr><th>Contrato</th><th>Cliente</th><th>Modalidade</th><th>Próx. reajuste</th><th>Atraso</th><th>Índice</th><th>Status</th></tr></thead>
-        <tbody>
-          <tr class="row-er"><td class="mono">CTR-2024-0001</td><td>Horizonte Tech</td><td><span class="badge bbl">ASP</span></td><td>01/03/2026</td><td style="color:var(--t-er);font-weight:500">+120d</td><td>INPC</td><td><span class="badge brd">Vencido</span></td></tr>
-          <tr><td class="mono">CTR-2024-0002</td><td>FarmaNacional</td><td><span class="badge bpr">BSP</span></td><td>01/04/2027</td><td style="color:var(--tm)">—</td><td>INPC</td><td><span class="badge bgn">Efetivado</span></td></tr>
-          <tr class="row-hi"><td class="mono">CTR-2024-0003</td><td>Vale Verde</td><td><span class="badge bam">BPO</span></td><td>01/06/2026</td><td style="color:var(--t-er);font-weight:500">+28d</td><td>INPC + dissídio</td><td><span class="badge bam">Pendente</span></td></tr>
-        </tbody>
+        <thead><tr><th>Contrato</th><th>Cliente</th><th>Modalidade</th><th>Próx. reajuste</th><th>Atraso</th><th>Mensalidade atual</th><th>Índice</th><th>Reajuste aplicado</th><th>Status</th></tr></thead>
+        <tbody id="reajustes-body"></tbody>
       </table>
     </div>
   </div>
@@ -930,20 +986,9 @@ tbody tr:hover td{background:var(--s1)}
 
 <!-- GO-LIVE -->
 <div id="p-golive" class="page">
-  <div class="topbar"><div><h1>Go-live</h1><p>2 itens aguardando confirmação</p></div></div>
+  <div class="topbar"><div><h1>Go-live</h1><p id="golive-subtitle">2 itens aguardando confirmação</p></div></div>
   <div class="content">
-    <div class="card">
-      <div class="card-title"><span><span class="badge bbl" style="margin-right:8px">ASP</span>CTR-2025-0001 — Campos Gerais</span><span style="font-size:11px;color:var(--tm)">262 dias em implantação</span></div>
-      <div class="tbl-wrap">
-        <table>
-          <thead><tr><th style="width:30px"><input type="checkbox"></th><th>Produto</th><th>Valor/mês</th><th>Status</th><th>Ação</th></tr></thead>
-          <tbody>
-            <tr><td><input type="checkbox"></td><td><strong>Licença base do sistema</strong><br><span class="mono" style="color:var(--tm)">ASP-LIC-BASE</span></td><td class="mono">R$ 3.040</td><td><span class="badge bam">Aguardando go-live</span></td><td><button class="btn" style="font-size:11px;color:var(--t-ok)">🚀 Registrar</button></td></tr>
-            <tr><td><input type="checkbox"></td><td><strong>Licença por usuário</strong><br><span class="mono" style="color:var(--tm)">8 usuários</span></td><td class="mono">R$ 1.280</td><td><span class="badge bam">Aguardando go-live</span></td><td><button class="btn" style="font-size:11px;color:var(--t-ok)">🚀 Registrar</button></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <div id="golive-cards" style="display:flex;flex-direction:column;gap:14px"></div>
   </div>
 </div>
 
@@ -1733,24 +1778,45 @@ document.querySelectorAll('.ni').forEach(n=>{
   const modalCancel = document.getElementById('email-confirm-cancel');
   const modalOk = document.getElementById('email-confirm-ok');
 
-  const TEMPLATES = {
-    cobranca: 'Prezado(a) cliente,\n\nIdentificamos um valor em aberto referente aos serviços prestados. Solicitamos a gentileza de regularizar o pagamento o quanto antes.\n\nEm caso de dúvidas, estamos à disposição.\n\nAtenciosamente,\nEquipe Financeiro',
-    reajuste: 'Prezado(a) cliente,\n\nInformamos que, conforme previsto em contrato, será aplicado o reajuste anual sobre os valores praticados a partir do próximo ciclo de faturamento.\n\nQualquer dúvida, estamos à disposição.\n\nAtenciosamente,\nEquipe Financeiro',
-    vencimento: 'Prezado(a) cliente,\n\nEste é um lembrete de que o boleto referente aos serviços contratados vencerá em breve. Para evitar encargos, realize o pagamento até a data de vencimento.\n\nAtenciosamente,\nEquipe Financeiro',
-    outro: ''
-  };
-  const ASSUNTO_LABEL = {
-    cobranca: 'Cobrança',
-    reajuste: 'Aviso de Reajuste',
-    vencimento: 'Lembrete de Vencimento',
-    outro: null
-  };
-  const ASSUNTO_BADGE = {
-    cobranca: 'brd',
-    reajuste: 'bpr',
-    vencimento: 'bam',
-    outro: 'bgy'
-  };
+  const KEY_TEMPLATES = 'sinergy_email_templates';
+  const KEY_ASSINATURA = 'sinergy_email_assinatura';
+
+  function seedTemplates(){
+    return [
+      {chave:'cobranca', nome:'Cobrança', corpo:'Prezado(a) cliente,\n\nIdentificamos um valor em aberto referente aos serviços prestados. Solicitamos a gentileza de regularizar o pagamento o quanto antes.\n\nEm caso de dúvidas, estamos à disposição.', badge:'brd', embutido:true},
+      {chave:'reajuste', nome:'Aviso de Reajuste', corpo:'Prezado(a) cliente,\n\nInformamos que, conforme previsto em contrato, será aplicado o reajuste anual sobre os valores praticados a partir do próximo ciclo de faturamento.\n\nQualquer dúvida, estamos à disposição.', badge:'bpr', embutido:true},
+      {chave:'vencimento', nome:'Lembrete de Vencimento', corpo:'Prezado(a) cliente,\n\nEste é um lembrete de que o boleto referente aos serviços contratados vencerá em breve. Para evitar encargos, realize o pagamento até a data de vencimento.', badge:'bam', embutido:true}
+    ];
+  }
+  function loadTemplates(){
+    let raw = null;
+    try{ raw = localStorage.getItem(KEY_TEMPLATES); }catch(e){}
+    if(!raw){
+      const s = seedTemplates();
+      try{ localStorage.setItem(KEY_TEMPLATES, JSON.stringify(s)); }catch(e){}
+      return s;
+    }
+    try{ return JSON.parse(raw) || []; }catch(e){ return seedTemplates(); }
+  }
+  function saveTemplates(list){ try{ localStorage.setItem(KEY_TEMPLATES, JSON.stringify(list)); }catch(e){} }
+  function templatePorChave(chave){
+    return loadTemplates().find(t => t.chave === chave) || null;
+  }
+
+  function seedAssinatura(){
+    return 'Atenciosamente,\nEquipe Financeiro\nSinergy RH';
+  }
+  function loadAssinatura(){
+    let raw = null;
+    try{ raw = localStorage.getItem(KEY_ASSINATURA); }catch(e){}
+    if(raw === null || raw === undefined){
+      const s = seedAssinatura();
+      try{ localStorage.setItem(KEY_ASSINATURA, s); }catch(e){}
+      return s;
+    }
+    return raw;
+  }
+  function saveAssinatura(txt){ try{ localStorage.setItem(KEY_ASSINATURA, txt); }catch(e){} }
 
   let anexos = [];
 
@@ -1776,12 +1842,131 @@ document.querySelectorAll('.ni').forEach(n=>{
   });
   clientCbs.forEach(cb => cb.addEventListener('change', atualizarContagemClientes));
 
+  function renderSubjectOptions(selecionarChave){
+    const templates = loadTemplates();
+    const embutidos = templates.filter(t => t.embutido);
+    const customizados = templates.filter(t => !t.embutido);
+    let html = '';
+    if(embutidos.length){
+      html += '<optgroup label="Modelos padrão">' + embutidos.map(t => '<option value="'+t.chave+'">'+escapeHtml(t.nome)+'</option>').join('') + '</optgroup>';
+    }
+    if(customizados.length){
+      html += '<optgroup label="Meus modelos">' + customizados.map(t => '<option value="'+t.chave+'">'+escapeHtml(t.nome)+'</option>').join('') + '</optgroup>';
+    }
+    html += '<option value="outro">Outro assunto</option>';
+    subjectSelect.innerHTML = html;
+    if(selecionarChave && (selecionarChave === 'outro' || templates.some(t => t.chave === selecionarChave))){
+      subjectSelect.value = selecionarChave;
+    }
+  }
+
   subjectSelect.addEventListener('change', () => {
     const v = subjectSelect.value;
     subjectCustom.style.display = v === 'outro' ? 'block' : 'none';
-    bodyField.value = TEMPLATES[v] || '';
+    const t = templatePorChave(v);
+    bodyField.value = t ? t.corpo : '';
   });
-  bodyField.value = TEMPLATES[subjectSelect.value] || '';
+
+  renderSubjectOptions('cobranca');
+  bodyField.value = (templatePorChave(subjectSelect.value) || {}).corpo || '';
+
+  // ---- Modelos de e-mail (salvar / gerenciar) ----
+  const saveTemplateBtn = document.getElementById('email-save-template-btn');
+  const templateNameModal = document.getElementById('email-template-name-modal');
+  const templateNameInput = document.getElementById('email-template-name-input');
+  const templateNameError = document.getElementById('email-template-name-error');
+  const templateNameCancel = document.getElementById('email-template-name-cancel');
+  const templateNameSave = document.getElementById('email-template-name-save');
+  const manageTemplatesBtn = document.getElementById('email-manage-templates-btn');
+  const templatesModal = document.getElementById('email-templates-modal');
+  const templatesList = document.getElementById('email-templates-list');
+  const templatesClose = document.getElementById('email-templates-close');
+
+  if(saveTemplateBtn && templateNameModal){
+    saveTemplateBtn.addEventListener('click', () => {
+      templateNameInput.value = '';
+      templateNameError.style.display = 'none';
+      templateNameModal.style.display = 'flex';
+    });
+    templateNameCancel.addEventListener('click', () => { templateNameModal.style.display = 'none'; });
+    templateNameSave.addEventListener('click', () => {
+      const nome = templateNameInput.value.trim();
+      if(!nome){
+        templateNameError.textContent = 'Informe um nome para o modelo.';
+        templateNameError.style.display = 'block';
+        return;
+      }
+      const templates = loadTemplates();
+      const chave = 'custom-' + Date.now();
+      templates.push({chave, nome, corpo: bodyField.value, badge:'bgy', embutido:false});
+      saveTemplates(templates);
+      renderSubjectOptions(chave);
+      templateNameModal.style.display = 'none';
+    });
+  }
+
+  function renderTemplatesList(){
+    const templates = loadTemplates();
+    templatesList.innerHTML = templates.map((t, idx) => {
+      const badge = '<span class="badge ' + (t.embutido ? 'bgy' : 'bbl') + '" style="margin-right:6px;font-size:9px">' + (t.embutido ? 'padrão' : 'meu modelo') + '</span>';
+      const delBtn = t.embutido ? '' : '<i class="ti ti-trash email-template-del-btn" data-idx="'+idx+'" style="cursor:pointer;color:var(--tm)" title="Excluir"></i>';
+      return '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 2px;border-bottom:0.5px solid var(--border);font-size:12px">' +
+        '<div>'+badge+escapeHtml(t.nome)+'</div>' + delBtn +
+      '</div>';
+    }).join('');
+
+    templatesList.querySelectorAll('.email-template-del-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const templates2 = loadTemplates();
+        const i = parseInt(btn.dataset.idx, 10);
+        const removendoAtual = templates2[i] && templates2[i].chave === subjectSelect.value;
+        templates2.splice(i, 1);
+        saveTemplates(templates2);
+        renderTemplatesList();
+        renderSubjectOptions(removendoAtual ? 'cobranca' : subjectSelect.value);
+        if(removendoAtual){
+          const t = templatePorChave('cobranca');
+          bodyField.value = t ? t.corpo : '';
+          subjectCustom.style.display = 'none';
+        }
+      });
+    });
+  }
+
+  if(manageTemplatesBtn && templatesModal){
+    manageTemplatesBtn.addEventListener('click', () => {
+      renderTemplatesList();
+      templatesModal.style.display = 'flex';
+    });
+    templatesClose.addEventListener('click', () => { templatesModal.style.display = 'none'; });
+  }
+
+  // ---- Assinatura ----
+  const assinaturaPreview = document.getElementById('email-assinatura-preview');
+  const incluirAssinaturaCb = document.getElementById('email-incluir-assinatura');
+  const editAssinaturaBtn = document.getElementById('email-edit-assinatura-btn');
+  const assinaturaModal = document.getElementById('email-assinatura-modal');
+  const assinaturaTextarea = document.getElementById('email-assinatura-textarea');
+  const assinaturaCancel = document.getElementById('email-assinatura-cancel');
+  const assinaturaSave = document.getElementById('email-assinatura-save');
+
+  function renderAssinaturaPreview(){
+    if(assinaturaPreview) assinaturaPreview.textContent = loadAssinatura();
+  }
+  renderAssinaturaPreview();
+
+  if(editAssinaturaBtn && assinaturaModal){
+    editAssinaturaBtn.addEventListener('click', () => {
+      assinaturaTextarea.value = loadAssinatura();
+      assinaturaModal.style.display = 'flex';
+    });
+    assinaturaCancel.addEventListener('click', () => { assinaturaModal.style.display = 'none'; });
+    assinaturaSave.addEventListener('click', () => {
+      saveAssinatura(assinaturaTextarea.value);
+      renderAssinaturaPreview();
+      assinaturaModal.style.display = 'none';
+    });
+  }
 
   function renderAnexos(){
     attachList.innerHTML = '';
@@ -1820,9 +2005,10 @@ document.querySelectorAll('.ni').forEach(n=>{
   function assuntoAtual(){
     const v = subjectSelect.value;
     if(v === 'outro'){
-      return { chave: 'outro', label: subjectCustom.value.trim() || null };
+      return { chave: 'outro', label: subjectCustom.value.trim() || null, badge: 'bgy' };
     }
-    return { chave: v, label: ASSUNTO_LABEL[v] };
+    const t = templatePorChave(v);
+    return { chave: v, label: t ? t.nome : null, badge: t ? (t.badge || 'bgy') : 'bgy' };
   }
 
   sendBtn.addEventListener('click', () => {
@@ -1845,7 +2031,8 @@ document.querySelectorAll('.ni').forEach(n=>{
 
     modalText.innerHTML = 'Confirma o envio do e-mail de <strong>' + escapeHtml(assunto.label) + '</strong> para <strong>' +
       clientesSelecionados.length + ' cliente(s)</strong>: ' + escapeHtml(listaNomes) + '.<br>' +
-      (anexos.length ? anexos.length + ' anexo(s) incluído(s).' : 'Nenhum anexo incluído.');
+      (anexos.length ? anexos.length + ' anexo(s) incluído(s).' : 'Nenhum anexo incluído.') +
+      (incluirAssinaturaCb && incluirAssinaturaCb.checked ? '<br>Assinatura incluída ao final da mensagem.' : '');
     modal.style.display = 'flex';
   });
 
@@ -1861,7 +2048,7 @@ document.querySelectorAll('.ni').forEach(n=>{
 
     const linha = document.createElement('tr');
     linha.innerHTML = '<td>Hoje</td>' +
-      '<td><span class="badge ' + (ASSUNTO_BADGE[assunto.chave] || 'bgy') + '">' + escapeHtml(assunto.label) + '</span></td>' +
+      '<td><span class="badge ' + (assunto.badge || 'bgy') + '">' + escapeHtml(assunto.label) + '</span></td>' +
       '<td>' + escapeHtml(listaNomes) + '</td>' +
       '<td>' + (anexos.length ? anexos.length + ' arquivo(s)' : '—') + '</td>' +
       '<td><span class="badge bgn">Enviado</span></td>';
@@ -1873,10 +2060,10 @@ document.querySelectorAll('.ni').forEach(n=>{
     atualizarContagemClientes();
     anexos = [];
     renderAnexos();
-    subjectSelect.value = 'cobranca';
+    renderSubjectOptions('cobranca');
     subjectCustom.style.display = 'none';
     subjectCustom.value = '';
-    bodyField.value = TEMPLATES.cobranca;
+    bodyField.value = (templatePorChave('cobranca') || {}).corpo || '';
   });
 
   atualizarContagemClientes();
@@ -2646,13 +2833,16 @@ document.querySelectorAll('.ni').forEach(n=>{
     const clientes = load();
     tbody.innerHTML = clientes.map((c, idx)=>{
       const rowClass = c.status === 'Inadimplente' ? ' class="row-er"' : '';
+      const emails = Array.isArray(c.emails) ? c.emails : [];
+      const emailsTxt = emails.length ? escapeHtml(emails.join(', ')) : 'sem e-mail cadastrado';
       return '<tr' + rowClass + '>' +
         '<td><strong>'+escapeHtml(c.nome)+'</strong><br><span class="mono" style="color:var(--tm)">'+escapeHtml(c.cnpj || '—')+'</span></td>' +
         '<td>'+escapeHtml(c.segmento || '—')+'</td>' +
         '<td>'+escapeHtml(c.porte || '—')+'</td>' +
         '<td>'+badgeContratos(c.nome)+'</td>' +
-        '<td>'+escapeHtml(c.contato || '—')+'</td>' +
+        '<td>'+escapeHtml(c.contato || '—')+'<br><span style="font-size:10px;color:var(--tm)">'+emailsTxt+'</span></td>' +
         '<td>'+renderStatusSelect(c.status, idx)+'</td>' +
+        '<td><i class="ti ti-pencil cliente-edit-btn" data-idx="'+idx+'" style="cursor:pointer;color:var(--tm)" title="Editar"></i></td>' +
       '</tr>';
     }).join('');
 
@@ -2669,6 +2859,13 @@ document.querySelectorAll('.ni').forEach(n=>{
       });
     });
 
+    tbody.querySelectorAll('.cliente-edit-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const i = parseInt(btn.dataset.idx, 10);
+        abrirModalEdicao(i);
+      });
+    });
+
     const subtitle = document.getElementById('clientes-subtitle');
     if(subtitle) subtitle.textContent = clientes.length + (clientes.length === 1 ? ' cadastrado' : ' cadastrados');
   }
@@ -2676,6 +2873,7 @@ document.querySelectorAll('.ni').forEach(n=>{
 
   const btnNovo = document.getElementById('cliente-new-btn');
   const modal = document.getElementById('cliente-modal');
+  const modalTitle = document.getElementById('cliente-modal-title');
   const formNome = document.getElementById('cliente-form-nome');
   const formCnpj = document.getElementById('cliente-form-cnpj');
   const formSegmento = document.getElementById('cliente-form-segmento');
@@ -2685,15 +2883,87 @@ document.querySelectorAll('.ni').forEach(n=>{
   const formError = document.getElementById('cliente-form-error');
   const btnCancel = document.getElementById('cliente-form-cancel');
   const btnSave = document.getElementById('cliente-form-save');
+  const emailsListEl = document.getElementById('cliente-form-emails-list');
+  const emailInput = document.getElementById('cliente-form-email-input');
+  const emailAddBtn = document.getElementById('cliente-form-email-add');
+
+  let editandoIdx = null;
+  let emailsForm = [];
+
+  function renderEmailsForm(){
+    if(!emailsListEl) return;
+    emailsListEl.innerHTML = emailsForm.map((email, i)=>{
+      return '<span class="badge bbl" style="display:inline-flex;align-items:center;gap:5px">' +
+        escapeHtml(email) +
+        '<i class="ti ti-x cliente-email-remove" data-idx="'+i+'" style="cursor:pointer;font-size:10px"></i>' +
+      '</span>';
+    }).join('') || '<span style="font-size:11px;color:var(--tm)">Nenhum e-mail adicionado ainda.</span>';
+
+    emailsListEl.querySelectorAll('.cliente-email-remove').forEach(x=>{
+      x.addEventListener('click', ()=>{
+        emailsForm.splice(parseInt(x.dataset.idx, 10), 1);
+        renderEmailsForm();
+      });
+    });
+  }
+
+  function adicionarEmailForm(){
+    const valor = (emailInput.value || '').trim().toLowerCase();
+    if(!valor) return;
+    const valido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor);
+    if(!valido){
+      formError.textContent = 'Informe um e-mail em um formato válido.';
+      formError.style.display = 'block';
+      return;
+    }
+    if(emailsForm.includes(valor)){
+      emailInput.value = '';
+      return;
+    }
+    emailsForm.push(valor);
+    emailInput.value = '';
+    formError.style.display = 'none';
+    renderEmailsForm();
+  }
+
+  if(emailAddBtn){
+    emailAddBtn.addEventListener('click', adicionarEmailForm);
+    emailInput.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter'){ e.preventDefault(); adicionarEmailForm(); }
+    });
+  }
+
+  function abrirModalEdicao(idx){
+    const clientes = load();
+    const c = clientes[idx];
+    if(!c) return;
+    editandoIdx = idx;
+    if(modalTitle) modalTitle.textContent = 'Editar Cliente';
+    formNome.value = c.nome || '';
+    formCnpj.value = c.cnpj || '';
+    formSegmento.value = c.segmento || '';
+    formPorte.value = c.porte || 'Médio';
+    formContato.value = c.contato || '';
+    formStatus.value = c.status || 'Ativo';
+    emailsForm = Array.isArray(c.emails) ? c.emails.slice() : [];
+    renderEmailsForm();
+    formError.style.display = 'none';
+    modal.style.display = 'flex';
+  }
 
   if(btnNovo && modal){
     btnNovo.addEventListener('click', ()=>{
+      editandoIdx = null;
+      if(modalTitle) modalTitle.textContent = 'Novo Cliente';
       formNome.value = '';
       formCnpj.value = '';
       formSegmento.value = '';
       formPorte.value = 'Médio';
       formContato.value = '';
       formStatus.value = 'Ativo';
+      emailsForm = [];
+      renderEmailsForm();
+      if(emailInput) emailInput.value = '';
       formError.style.display = 'none';
       modal.style.display = 'flex';
     });
@@ -2707,18 +2977,40 @@ document.querySelectorAll('.ni').forEach(n=>{
         return;
       }
       const clientes = load();
-      if(clientes.some(c=>c.nome.toLowerCase() === nome.toLowerCase())){
+      const duplicado = clientes.some((c, i)=> c.nome.toLowerCase() === nome.toLowerCase() && i !== editandoIdx);
+      if(duplicado){
         formError.textContent = 'Já existe um cliente cadastrado com este nome.';
         formError.style.display = 'block';
         return;
       }
-      clientes.push({
+
+      const dadosCliente = {
         nome, cnpj: formCnpj.value.trim(), segmento: formSegmento.value.trim() || '—',
-        porte: formPorte.value, contato: formContato.value.trim() || '—', status: formStatus.value
-      });
-      save(clientes);
+        porte: formPorte.value, contato: formContato.value.trim() || '—', status: formStatus.value,
+        emails: emailsForm.slice()
+      };
+
+      if(editandoIdx !== null && clientes[editandoIdx]){
+        const nomeAntigo = clientes[editandoIdx].nome;
+        clientes[editandoIdx] = dadosCliente;
+        save(clientes);
+        if(nomeAntigo && nomeAntigo !== nome){
+          let contratos = [];
+          try{ contratos = JSON.parse(localStorage.getItem(KEY_CONTRATOS)) || []; }catch(e){}
+          let mudou = false;
+          contratos.forEach(ct=>{ if(ct.cliente === nomeAntigo){ ct.cliente = nome; mudou = true; } });
+          if(mudou){
+            try{ localStorage.setItem(KEY_CONTRATOS, JSON.stringify(contratos)); }catch(e){}
+          }
+        }
+      } else {
+        clientes.push(dadosCliente);
+        save(clientes);
+      }
+
       modal.style.display = 'none';
       render();
+      if(window.sinergyRenderContratos) window.sinergyRenderContratos();
     });
   }
 
@@ -2788,6 +3080,13 @@ document.querySelectorAll('.ni').forEach(n=>{
     sel.style.background = cor.bg;
     sel.style.color = cor.cor;
   }
+  function renderClienteSelect(clienteAtual, idx){
+    const clientes = window.sinergyGetClientes ? window.sinergyGetClientes() : [];
+    const nomes = clientes.map(c=>c.nome);
+    if(clienteAtual && !nomes.includes(clienteAtual)) nomes.push(clienteAtual);
+    const opts = nomes.map(n=>'<option value="'+escapeHtml(n)+'" '+(n===clienteAtual?'selected':'')+'>'+escapeHtml(n)+'</option>').join('');
+    return '<select class="contrato-cliente-select" data-idx="'+idx+'" title="Migrar contrato para outro cliente" style="font-size:11px;padding:3px 5px;border-radius:4px;border:0.5px solid var(--bs);background:var(--s2);color:var(--tp);font-family:inherit;cursor:pointer;max-width:150px">'+opts+'</select>';
+  }
 
   function render(){
     const contratos = load();
@@ -2798,7 +3097,7 @@ document.querySelectorAll('.ni').forEach(n=>{
       const fimEstilo = (c.fim && c.fim.indexOf('Vence') === 0) ? ' style="color:var(--t-er);font-weight:500"' : (c.fim ? '' : ' style="color:var(--tm)"');
       return '<tr'+rowClass+'>' +
         '<td class="mono">'+escapeHtml(c.numero)+'</td>' +
-        '<td>'+escapeHtml(c.cliente)+'</td>' +
+        '<td>'+renderClienteSelect(c.cliente, idx)+'</td>' +
         '<td><span class="badge bbl">'+escapeHtml(c.modalidade || '—')+'</span></td>' +
         '<td>'+escapeHtml(c.diaFat || '—')+'</td>' +
         '<td class="mono"'+(c.mensalidade ? '' : ' style="color:var(--tm)"')+'>'+fmtMoedaCheia(c.mensalidade)+'</td>' +
@@ -2821,6 +3120,18 @@ document.querySelectorAll('.ni').forEach(n=>{
       });
     });
 
+    tbody.querySelectorAll('.contrato-cliente-select').forEach(sel=>{
+      sel.addEventListener('change', ()=>{
+        const lista = load();
+        const i = parseInt(sel.dataset.idx, 10);
+        if(lista[i]){
+          lista[i].cliente = sel.value;
+          save(lista);
+          render();
+        }
+      });
+    });
+
     const subtitle = document.getElementById('contratos-subtitle');
     if(subtitle){
       const somaMensal = contratos.reduce((s,c)=> s + (typeof c.mensalidade === 'number' ? c.mensalidade : 0), 0);
@@ -2828,7 +3139,9 @@ document.querySelectorAll('.ni').forEach(n=>{
     }
 
     if(window.sinergyRenderClientes) window.sinergyRenderClientes();
+    if(window.sinergyRenderGolive) window.sinergyRenderGolive();
   }
+  window.sinergyRenderContratos = render;
 
   const btnNovo = document.getElementById('contrato-new-btn');
   const modal = document.getElementById('contrato-modal');
@@ -3582,6 +3895,427 @@ document.querySelectorAll('.ni').forEach(n=>{
       modal.style.display = 'none';
       render();
     });
+  }
+
+  render();
+})();
+
+// ---- REAJUSTES (índices INPC/IGP-M/IPCA e reajuste automático) ----
+(function(){
+  const KEY_REAJUSTES = 'sinergy_reajustes';
+  const KEY_INDICES = 'sinergy_indices_reajuste';
+  const KEY_CONTRATOS = 'sinergy_contratos';
+  const tbody = document.getElementById('reajustes-body');
+  if(!tbody) return;
+
+  function escapeHtml(s){
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  function fmtMoedaCheia(v){
+    if(v === null || v === undefined || v === '') return '—';
+    const n = typeof v === 'number' ? v : parseFloat(String(v).replace(/[^\d.,-]/g,'').replace(',', '.'));
+    if(isNaN(n)) return '—';
+    return 'R$ ' + n.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+  function fmtPercentBR(v){
+    if(typeof v !== 'number' || isNaN(v)) return '—';
+    return v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}) + '%';
+  }
+  function fmtDataBR(iso){
+    if(!iso) return '—';
+    const partes = String(iso).split('-');
+    if(partes.length !== 3) return escapeHtml(iso);
+    const [a,m,d] = partes;
+    return d+'/'+m+'/'+a;
+  }
+
+  const INDICES_PADRAO = { 'INPC': 4.72, 'IGP-M': 3.85, 'IPCA': 4.50 };
+
+  function loadIndices(){
+    let raw = null;
+    try{ raw = localStorage.getItem(KEY_INDICES); }catch(e){}
+    if(!raw){
+      try{ localStorage.setItem(KEY_INDICES, JSON.stringify(INDICES_PADRAO)); }catch(e){}
+      return Object.assign({}, INDICES_PADRAO);
+    }
+    try{ return Object.assign({}, INDICES_PADRAO, JSON.parse(raw)); }catch(e){ return Object.assign({}, INDICES_PADRAO); }
+  }
+  function saveIndices(obj){ try{ localStorage.setItem(KEY_INDICES, JSON.stringify(obj)); }catch(e){} }
+
+  function seed(){
+    return [
+      {contrato:'CTR-2024-0001', proxReajuste:'2026-03-01', indice:'', aplicado:false, mensalidadeAntes:null, mensalidadeDepois:null, percentualAplicado:null, aplicadoEm:null},
+      {contrato:'CTR-2024-0002', proxReajuste:'2027-04-01', indice:'INPC', aplicado:true, mensalidadeAntes:8300, mensalidadeDepois:8674, percentualAplicado:4.5, aplicadoEm:'2026-04-01T00:00:00.000Z'},
+      {contrato:'CTR-2024-0003', proxReajuste:'2026-06-01', indice:'', aplicado:false, mensalidadeAntes:null, mensalidadeDepois:null, percentualAplicado:null, aplicadoEm:null}
+    ];
+  }
+
+  function load(){
+    let raw = null;
+    try{ raw = localStorage.getItem(KEY_REAJUSTES); }catch(e){}
+    if(!raw){
+      const s = seed();
+      try{ localStorage.setItem(KEY_REAJUSTES, JSON.stringify(s)); }catch(e){}
+      return s;
+    }
+    try{ return JSON.parse(raw) || []; }catch(e){ return []; }
+  }
+  function save(list){ try{ localStorage.setItem(KEY_REAJUSTES, JSON.stringify(list)); }catch(e){} }
+
+  function loadContratos(){
+    try{ return JSON.parse(localStorage.getItem(KEY_CONTRATOS)) || []; }catch(e){ return []; }
+  }
+  function saveContratos(list){ try{ localStorage.setItem(KEY_CONTRATOS, JSON.stringify(list)); }catch(e){} }
+
+  function diasAtraso(r){
+    if(!r.proxReajuste) return null;
+    const hoje = new Date();
+    const alvo = new Date(r.proxReajuste + 'T00:00:00');
+    return Math.floor((hoje - alvo) / 86400000);
+  }
+
+  function calcularStatus(r){
+    if(r.aplicado) return 'Efetivado';
+    const dias = diasAtraso(r);
+    if(dias !== null && dias > 60) return 'Vencido';
+    return 'Pendente';
+  }
+
+  function renderIndiceSelect(r, idx){
+    const opcoes = ['INPC','IGP-M','IPCA'];
+    const optsHtml = '<option value="">— selecionar —</option>' + opcoes.map(o=>'<option value="'+o+'" '+(o===r.indice?'selected':'')+'>'+o+'</option>').join('');
+    const disabled = r.aplicado ? ' disabled' : '';
+    return '<select class="reajuste-indice-select" data-idx="'+idx+'" style="font-size:11px;padding:3px 5px;border-radius:4px;border:0.5px solid var(--bs);background:var(--s2);color:var(--tp);font-family:inherit;cursor:pointer"'+disabled+'>'+optsHtml+'</select>';
+  }
+
+  function render(){
+    const reajustes = load();
+    const contratos = loadContratos();
+    const STATUS_BADGE = {'Vencido':'brd', 'Pendente':'bam', 'Efetivado':'bgn'};
+
+    tbody.innerHTML = reajustes.map((r, idx)=>{
+      const contrato = contratos.find(c=>c.numero === r.contrato);
+      const cliente = contrato ? contrato.cliente : '—';
+      const modalidade = contrato ? contrato.modalidade : '—';
+      const mensalidadeAtual = contrato ? contrato.mensalidade : null;
+      const status = calcularStatus(r);
+      const dias = diasAtraso(r);
+      const rowClass = status === 'Vencido' ? ' class="row-er"' : ((status === 'Pendente' && dias !== null && dias > 0) ? ' class="row-hi"' : '');
+
+      let atrasoTxt = '<span style="color:var(--tm)">—</span>';
+      if(!r.aplicado && dias !== null && dias > 0){
+        atrasoTxt = '<span style="color:var(--t-er);font-weight:500">+'+dias+'d</span>';
+      }
+
+      let reajusteTxt = '<span style="color:var(--tm)">—</span>';
+      if(r.aplicado && typeof r.percentualAplicado === 'number'){
+        reajusteTxt = '<span style="color:var(--t-ok);font-size:11px">+'+fmtPercentBR(r.percentualAplicado)+' → '+fmtMoedaCheia(r.mensalidadeDepois)+'</span>';
+      }
+
+      const reverterBtn = r.aplicado ? ' <i class="ti ti-arrow-back-up reajuste-reverter-btn" data-idx="'+idx+'" title="Reverter reajuste" style="cursor:pointer;color:var(--tm);margin-left:6px"></i>' : '';
+
+      return '<tr'+rowClass+'>' +
+        '<td class="mono">'+escapeHtml(r.contrato)+'</td>' +
+        '<td>'+escapeHtml(cliente)+'</td>' +
+        '<td><span class="badge bbl">'+escapeHtml(modalidade)+'</span></td>' +
+        '<td>'+fmtDataBR(r.proxReajuste)+'</td>' +
+        '<td>'+atrasoTxt+'</td>' +
+        '<td class="mono">'+fmtMoedaCheia(mensalidadeAtual)+'</td>' +
+        '<td>'+renderIndiceSelect(r, idx)+reverterBtn+'</td>' +
+        '<td>'+reajusteTxt+'</td>' +
+        '<td><span class="badge '+(STATUS_BADGE[status]||'bgy')+'">'+status+'</span></td>' +
+      '</tr>';
+    }).join('');
+
+    tbody.querySelectorAll('.reajuste-indice-select').forEach(sel=>{
+      sel.addEventListener('change', ()=>{
+        aplicarIndice(parseInt(sel.dataset.idx, 10), sel.value);
+      });
+    });
+
+    tbody.querySelectorAll('.reajuste-reverter-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        reverterReajuste(parseInt(btn.dataset.idx, 10));
+      });
+    });
+
+    atualizarMetricas(reajustes, contratos);
+  }
+
+  function aplicarIndice(idx, indiceEscolhido){
+    if(!indiceEscolhido) return;
+    const reajustes = load();
+    const r = reajustes[idx];
+    if(!r) return;
+    const indices = loadIndices();
+    const pct = indices[indiceEscolhido];
+    if(typeof pct !== 'number') return;
+
+    const contratos = loadContratos();
+    const contrato = contratos.find(c=>c.numero === r.contrato);
+    const baseAtual = contrato && typeof contrato.mensalidade === 'number' ? contrato.mensalidade : 0;
+    const novoValor = Math.round(baseAtual * (1 + pct/100) * 100) / 100;
+
+    r.indice = indiceEscolhido;
+    r.mensalidadeAntes = baseAtual;
+    r.mensalidadeDepois = novoValor;
+    r.percentualAplicado = pct;
+    r.aplicado = true;
+    r.aplicadoEm = new Date().toISOString();
+    if(r.proxReajuste){
+      const d = new Date(r.proxReajuste + 'T00:00:00');
+      d.setFullYear(d.getFullYear() + 1);
+      r.proxReajuste = d.toISOString().slice(0,10);
+    }
+
+    if(contrato) contrato.mensalidade = novoValor;
+
+    save(reajustes);
+    saveContratos(contratos);
+    if(window.sinergyRenderContratos) window.sinergyRenderContratos();
+    render();
+  }
+
+  function reverterReajuste(idx){
+    const reajustes = load();
+    const r = reajustes[idx];
+    if(!r || !r.aplicado) return;
+
+    const contratos = loadContratos();
+    const contrato = contratos.find(c=>c.numero === r.contrato);
+    if(contrato && r.mensalidadeAntes !== null && r.mensalidadeAntes !== undefined){
+      contrato.mensalidade = r.mensalidadeAntes;
+    }
+    if(r.proxReajuste){
+      const d = new Date(r.proxReajuste + 'T00:00:00');
+      d.setFullYear(d.getFullYear() - 1);
+      r.proxReajuste = d.toISOString().slice(0,10);
+    }
+    r.indice = '';
+    r.aplicado = false;
+    r.mensalidadeDepois = null;
+    r.percentualAplicado = null;
+    r.aplicadoEm = null;
+
+    save(reajustes);
+    saveContratos(contratos);
+    if(window.sinergyRenderContratos) window.sinergyRenderContratos();
+    render();
+  }
+
+  function atualizarMetricas(reajustes, contratos){
+    let pendentesCount = 0, efetivadosCount = 0;
+    let piorAtraso = null, piorContrato = null;
+    let ultimoAplicado = null;
+    reajustes.forEach(r=>{
+      const status = calcularStatus(r);
+      if(status === 'Efetivado') efetivadosCount += 1;
+      else pendentesCount += 1;
+      const dias = diasAtraso(r);
+      if(!r.aplicado && dias !== null && dias > 0 && (piorAtraso === null || dias > piorAtraso)){
+        piorAtraso = dias;
+        piorContrato = r.contrato;
+      }
+      if(r.aplicado && r.aplicadoEm && (!ultimoAplicado || r.aplicadoEm > ultimoAplicado.aplicadoEm)){
+        ultimoAplicado = r;
+      }
+    });
+
+    const elTotal = document.getElementById('reajuste-m-total');
+    const elPendCount = document.getElementById('reajuste-m-pendentes-count');
+    const elPendSub = document.getElementById('reajuste-m-pendentes-sub');
+    const elEfet = document.getElementById('reajuste-m-efetivados');
+    const elUltimo = document.getElementById('reajuste-m-ultimo');
+    const elUltimoSub = document.getElementById('reajuste-m-ultimo-sub');
+
+    if(elTotal) elTotal.textContent = String(reajustes.length);
+    if(elPendCount) elPendCount.textContent = String(pendentesCount);
+    if(elPendSub) elPendSub.textContent = piorContrato ? (piorContrato + ' +' + piorAtraso + 'd') : (pendentesCount ? 'Nenhum vencido' : '—');
+    if(elEfet) elEfet.textContent = String(efetivadosCount);
+    if(elUltimo) elUltimo.textContent = ultimoAplicado ? (ultimoAplicado.indice + ' ' + fmtPercentBR(ultimoAplicado.percentualAplicado)) : '—';
+    if(elUltimoSub){
+      const contratoUltimo = ultimoAplicado ? contratos.find(c=>c.numero === ultimoAplicado.contrato) : null;
+      elUltimoSub.textContent = contratoUltimo ? contratoUltimo.cliente : '';
+    }
+  }
+
+  // ---- Índices configuráveis ----
+  const inputInpc = document.getElementById('reajuste-indice-inpc');
+  const inputIgpm = document.getElementById('reajuste-indice-igpm');
+  const inputIpca = document.getElementById('reajuste-indice-ipca');
+  const btnSalvarIndices = document.getElementById('reajuste-indices-save');
+
+  function preencherInputsIndices(){
+    const indices = loadIndices();
+    if(inputInpc) inputInpc.value = fmtPercentBR(indices['INPC']).replace('%','');
+    if(inputIgpm) inputIgpm.value = fmtPercentBR(indices['IGP-M']).replace('%','');
+    if(inputIpca) inputIpca.value = fmtPercentBR(indices['IPCA']).replace('%','');
+  }
+  preencherInputsIndices();
+
+  if(btnSalvarIndices){
+    btnSalvarIndices.addEventListener('click', ()=>{
+      function parsePct(input, fallback){
+        const n = parseFloat((input.value||'').replace(',', '.'));
+        return isNaN(n) ? fallback : n;
+      }
+      const atuais = loadIndices();
+      const novos = {
+        'INPC': parsePct(inputInpc, atuais['INPC']),
+        'IGP-M': parsePct(inputIgpm, atuais['IGP-M']),
+        'IPCA': parsePct(inputIpca, atuais['IPCA'])
+      };
+      saveIndices(novos);
+      preencherInputsIndices();
+      render();
+    });
+  }
+
+  render();
+})();
+
+// ---- GO-LIVE (interligado com o status "Go-live pend." dos Contratos) ----
+(function(){
+  const KEY_CONTRATOS = 'sinergy_contratos';
+  const KEY_GOLIVE_ITENS = 'sinergy_golive_itens';
+  const container = document.getElementById('golive-cards');
+  if(!container) return;
+
+  function escapeHtml(s){
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  function fmtMoedaCheia(v){
+    if(v === null || v === undefined || v === '') return '—';
+    const n = typeof v === 'number' ? v : parseFloat(String(v).replace(/[^\d.,-]/g,'').replace(',', '.'));
+    if(isNaN(n)) return '—';
+    return 'R$ ' + Math.round(n).toLocaleString('pt-BR');
+  }
+
+  function loadContratos(){
+    try{ return JSON.parse(localStorage.getItem(KEY_CONTRATOS)) || []; }catch(e){ return []; }
+  }
+  function saveContratos(list){ try{ localStorage.setItem(KEY_CONTRATOS, JSON.stringify(list)); }catch(e){} }
+
+  function seedItens(){
+    return {
+      'CTR-2025-0001': [
+        {nome:'Licença base do sistema', codigo:'ASP-LIC-BASE', valor:3040, registrado:false},
+        {nome:'Licença por usuário', codigo:'8 usuários', valor:1280, registrado:false}
+      ]
+    };
+  }
+  function loadGoliveItens(){
+    let raw = null;
+    try{ raw = localStorage.getItem(KEY_GOLIVE_ITENS); }catch(e){}
+    if(!raw){
+      const s = seedItens();
+      try{ localStorage.setItem(KEY_GOLIVE_ITENS, JSON.stringify(s)); }catch(e){}
+      return s;
+    }
+    try{ return JSON.parse(raw) || {}; }catch(e){ return {}; }
+  }
+  function saveGoliveItens(obj){ try{ localStorage.setItem(KEY_GOLIVE_ITENS, JSON.stringify(obj)); }catch(e){} }
+
+  function itensParaContrato(contrato, todosItens){
+    if(todosItens[contrato.numero] && todosItens[contrato.numero].length){
+      return todosItens[contrato.numero];
+    }
+    const itemPadrao = [{
+      nome: 'Ativação do contrato',
+      codigo: contrato.numero,
+      valor: typeof contrato.mensalidade === 'number' ? contrato.mensalidade : 0,
+      registrado: false
+    }];
+    todosItens[contrato.numero] = itemPadrao;
+    saveGoliveItens(todosItens);
+    return itemPadrao;
+  }
+
+  function renderCard(contrato, itens){
+    const linhas = itens.map((item, idx)=>{
+      const statusBadge = item.registrado ? '<span class="badge bgn">Registrado</span>' : '<span class="badge bam">Aguardando go-live</span>';
+      const acao = item.registrado
+        ? '<button class="btn" style="font-size:11px;color:var(--tm)" disabled>✓ Registrado</button>'
+        : '<button class="btn golive-registrar-btn" data-contrato="'+escapeHtml(contrato.numero)+'" data-idx="'+idx+'" style="font-size:11px;color:var(--t-ok)">🚀 Registrar</button>';
+      return '<tr>' +
+        '<td><input type="checkbox"'+(item.registrado ? ' checked disabled' : '')+'></td>' +
+        '<td><strong>'+escapeHtml(item.nome)+'</strong><br><span class="mono" style="color:var(--tm)">'+escapeHtml(item.codigo || '—')+'</span></td>' +
+        '<td class="mono">'+fmtMoedaCheia(item.valor)+'</td>' +
+        '<td>'+statusBadge+'</td>' +
+        '<td>'+acao+'</td>' +
+      '</tr>';
+    }).join('');
+
+    return '<div class="card">' +
+      '<div class="card-title"><span><span class="badge bbl" style="margin-right:8px">'+escapeHtml(contrato.modalidade || '—')+'</span>'+escapeHtml(contrato.numero)+' — '+escapeHtml(contrato.cliente)+'</span></div>' +
+      '<div class="tbl-wrap"><table>' +
+        '<thead><tr><th style="width:30px"></th><th>Produto</th><th>Valor/mês</th><th>Status</th><th>Ação</th></tr></thead>' +
+        '<tbody>'+linhas+'</tbody>' +
+      '</table></div>' +
+    '</div>';
+  }
+
+  function render(){
+    const contratos = loadContratos();
+    const pendentes = contratos.filter(c => c.status === 'Go-live pend.');
+    const todosItens = loadGoliveItens();
+
+    if(!pendentes.length){
+      container.innerHTML = '<div class="card" style="text-align:center;color:var(--tm);padding:28px 16px">Nenhum contrato aguardando go-live no momento.</div>';
+    } else {
+      container.innerHTML = pendentes.map(c => renderCard(c, itensParaContrato(c, todosItens))).join('');
+    }
+
+    container.querySelectorAll('.golive-registrar-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        registrarItem(btn.dataset.contrato, parseInt(btn.dataset.idx, 10));
+      });
+    });
+
+    let totalPendenteItens = 0;
+    pendentes.forEach(c=>{
+      const lista = todosItens[c.numero] || [];
+      totalPendenteItens += lista.filter(i => !i.registrado).length;
+    });
+
+    const subtitle = document.getElementById('golive-subtitle');
+    if(subtitle){
+      subtitle.textContent = totalPendenteItens
+        ? (totalPendenteItens + (totalPendenteItens === 1 ? ' item aguardando confirmação' : ' itens aguardando confirmação'))
+        : 'Nenhum item aguardando confirmação';
+    }
+    const navBadge = document.querySelector('.ni[data-p="golive"] .nb');
+    if(navBadge){
+      if(totalPendenteItens > 0){
+        navBadge.textContent = String(totalPendenteItens);
+        navBadge.style.display = '';
+      } else {
+        navBadge.style.display = 'none';
+      }
+    }
+  }
+  window.sinergyRenderGolive = render;
+
+  function registrarItem(numeroContrato, idx){
+    const todosItens = loadGoliveItens();
+    const lista = todosItens[numeroContrato];
+    if(!lista || !lista[idx]) return;
+    lista[idx].registrado = true;
+    saveGoliveItens(todosItens);
+
+    const todosRegistrados = lista.every(i => i.registrado);
+    if(todosRegistrados){
+      const contratos = loadContratos();
+      const contrato = contratos.find(c => c.numero === numeroContrato);
+      if(contrato && contrato.status === 'Go-live pend.'){
+        contrato.status = 'Ativo';
+        contrato.fase = 'Recorrência';
+        saveContratos(contratos);
+        if(window.sinergyRenderContratos) window.sinergyRenderContratos();
+        return;
+      }
+    }
+    render();
   }
 
   render();
